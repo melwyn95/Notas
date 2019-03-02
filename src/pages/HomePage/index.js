@@ -8,6 +8,9 @@ import './styles.css';
 import IDBContext from '../../contexts/idbContext';
 
 import Header from './Header'
+import SearchBar from './SearchBar';
+import NotesContainer from './NotesContainer';
+import AddNotes from './AddNotes';
 
 const HomePage = () => {
 	const [openedFolder, setOpenedFolder] = useState(null);
@@ -32,7 +35,7 @@ const HomePage = () => {
 	}, []);
 
 	if (!openedFolder) {
-		return <Spinner size={30} thickness={4} />;
+		return <Spinner />;
 	}
 
 	return (
@@ -43,6 +46,9 @@ const HomePage = () => {
 				setSnackError={setSnackError}
 				showDropdown={showDropdown}
 				setShowDropdown={setShowDropdown} />
+			<SearchBar />
+			<NotesContainer openedFolder={openedFolder} />
+			<AddNotes />
 			<Snackbar
 				open={Boolean(snackError)}
 				autoHideDuration={2000}

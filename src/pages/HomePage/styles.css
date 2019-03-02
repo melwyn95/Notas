@@ -5,6 +5,11 @@
 
 .container--home-page {
     height: 100%;
+    background-color: #eee;
+}
+
+.container--search-bar {
+    padding: 0 10px;
 }
 
 .container--header {
@@ -93,4 +98,16 @@
 
 .new-folder-container {
     display: flex;
+}
+
+.container--notes {
+    padding: 10px;
+    height: calc(100vh - 92px);
+    overflow: auto;
+}
+
+.container--add-notes {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
 }
