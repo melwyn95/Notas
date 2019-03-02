@@ -1,33 +1,15 @@
-import React, { Fragment, useContext } from 'react';
+import React, { Fragment } from 'react';
 
-import IDBContext from '../../../contexts/idbContext';
 import Spinner from '../../../components/Spinner';
+
+import doFolderAction, { OPEN_CREATE_FOLDER_MODAL } from '../actions/doFolderAction';
 
 const selectFolder = (folder, setOpenedFolder, setShowDropdown) => {
 	setShowDropdown(false);
 	setOpenedFolder(folder);
 };
 
-const createNewFolder = (idb, setShowDropdown) => {
-	idb
-		.then((db) => {
-			let tx = db.transaction('folders', 'readwrite');
-			let store = tx.objectStore('folders');
-			store.add({
-				name: 'Untitled',
-				timestamp: new Date().getTime(),
-				count: 0
-			});
-			return tx.complete;
-		})
-		.then(() => {
-			setShowDropdown(false);
-		});
-};
-
-const FolderList = ({ folders, setShowDropdown, setOpenedFolder, openedFolder }) => {
-	const { idb } = useContext(IDBContext);
-
+const FolderList = ({ folders, setShowDropdown, setOpenedFolder, openedFolder, setOpen }) => {
 	if (!folders) {
 		return <Spinner />;
 	}
@@ -55,7 +37,10 @@ const FolderList = ({ folders, setShowDropdown, setOpenedFolder, openedFolder })
 					<div className="separator" />
 				</Fragment>
 			))}
-			<div className="list-item" key="new-folder" onClick={() => createNewFolder(idb, setShowDropdown)}>
+			<div className="list-item" key="new-folder"
+				onClick={() => {
+					doFolderAction(OPEN_CREATE_FOLDER_MODAL.operation, undefined, { setShowDropdown, setOpen })
+				}}>
 				<div className="new-folder-container">
 					<div className="plus-icon">+</div>New Folder
 				</div>

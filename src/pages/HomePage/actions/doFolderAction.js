@@ -1,30 +1,34 @@
 const OPEN_RENAME_FOLDER_MODAL = { label: 'Rename', operation: 'open_rename_folder_modal' };
 const OPEN_DELETE_FOLDER_MODAL = { label: 'Delete', operation: 'open_delete_folder_modal' };
+const OPEN_CREATE_FOLDER_MODAL = { operation: 'open_create_folder_modal' };
 const RENAME_FOLDER = { operation: 'rename_folder' };
 const DELETE_FOLDER = { operation: 'delete_folder' };
+const CREATE_FOLDER = { operation: 'create_foler' };
 const OPEN_SETTINGS = { label: 'Open Settings', operation: 'open_settings' };
 
-const FolderMenuOptions = [ OPEN_RENAME_FOLDER_MODAL, OPEN_DELETE_FOLDER_MODAL, OPEN_SETTINGS ];
+const FolderMenuOptions = [OPEN_RENAME_FOLDER_MODAL, OPEN_DELETE_FOLDER_MODAL, OPEN_SETTINGS];
 
 const doFolderAction = async (actionName, folder_id, params) => {
 	switch (actionName) {
 		case OPEN_RENAME_FOLDER_MODAL.operation: {
 			const { setOpen } = params;
-			setOpen(true);
+			setOpen(RENAME_FOLDER.operation);
 			break;
 		}
 		case OPEN_DELETE_FOLDER_MODAL.operation: {
+			const { setOpen } = params;
+			setOpen(DELETE_FOLDER.operation);
 			break;
 		}
 		case RENAME_FOLDER.operation: {
-			const { setOpenedFolder, idb } = params;
+			const { setOpenedFolder, idb, value, close, setSnackError } = params;
 			idb
 				.then(async (db) => {
 					let tx = db.transaction('folders', 'readwrite');
 					let store = tx.objectStore('folders');
 					let folder = await store.get(folder_id);
 
-					folder.name = 'Rename';
+					folder.name = value;
 					folder.timestamp = new Date().getTime();
 					store.put(folder);
 					return tx.complete;
@@ -35,7 +39,11 @@ const doFolderAction = async (actionName, folder_id, params) => {
 						let store = tx.objectStore('folders');
 						let folder = await store.get(folder_id);
 						setOpenedFolder(folder);
+						close();
 					});
+				})
+				.catch(() => {
+					setSnackError('A folder with the same name already exists.');
 				});
 
 			break;
@@ -59,11 +67,53 @@ const doFolderAction = async (actionName, folder_id, params) => {
 				});
 			break;
 		}
+		case OPEN_CREATE_FOLDER_MODAL.operation: {
+			const { setShowDropdown, setOpen } = params;
+			setShowDropdown(false);
+			setOpen(CREATE_FOLDER.operation);
+			break;
+		}
+		case CREATE_FOLDER.operation: {
+			const { idb, setOpenedFolder, value, close, setSnackError } = params;
+			idb
+				.then((db) => {
+					let tx = db.transaction('folders', 'readwrite');
+					let store = tx.objectStore('folders');
+					store.add({
+						name: value,
+						count: 0
+					});
+					return tx.complete;
+				})
+				.then(() => {
+					idb.then(async (db) => {
+						let tx = db.transaction('folders', 'readonly');
+						let store = tx.objectStore('folders');
+						let index = store.index('folderNames');
+						let folder = await index.get(value);
+						setOpenedFolder(folder);
+						close();
+					});
+				})
+				.catch(() => {
+					setSnackError('A folder with the same name already exists.');
+				});
+			break;
+		}
 		default:
 			console.log('INVALID OPERATION');
 	}
 };
 
-export { FolderMenuOptions };
+export {
+	FolderMenuOptions,
+	OPEN_RENAME_FOLDER_MODAL,
+	OPEN_DELETE_FOLDER_MODAL,
+	OPEN_CREATE_FOLDER_MODAL,
+	RENAME_FOLDER,
+	DELETE_FOLDER,
+	OPEN_SETTINGS,
+	CREATE_FOLDER,
+};
 
 export default doFolderAction;

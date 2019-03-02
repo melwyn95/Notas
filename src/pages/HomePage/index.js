@@ -1,4 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
+import Snackbar from '@material-ui/core/Snackbar';
 
 import Spinner from '../../components/Spinner';
 
@@ -9,25 +10,25 @@ import IDBContext from '../../contexts/idbContext';
 import Header from './Header'
 
 const HomePage = () => {
-	const [ openedFolder, setOpenedFolder ] = useState(null);
+	const [openedFolder, setOpenedFolder] = useState(null);
+	const [snackError, setSnackError] = useState(null);
+	const [showDropdown, setShowDropdown] = useState(false);
+	const clearDropDown = useCallback(() => {
+		setShowDropdown(false);
+	}, []);
+	const closeSnackBar = useCallback(() => {
+		setSnackError(null);
+	}, []);
 	const { idb } = useContext(IDBContext);
 
 	useEffect(() => {
 		idb
-			.then((db) => {
+			.then(async (db) => {
 				let tx = db.transaction('folders', 'readonly');
 				let store = tx.objectStore('folders');
-				let index = store.index('folderTimestamps');
-				return index.openCursor();
+				let folder = await store.get(1);
+				setOpenedFolder(folder);
 			})
-			.then(function findFolder(cursor) {
-				let { value } = cursor;
-				let { name } = value;
-				if (name === 'Trash') {
-					return cursor.continue().then(findFolder);
-				}
-				setOpenedFolder(value);
-			});
 	}, []);
 
 	if (!openedFolder) {
@@ -35,8 +36,18 @@ const HomePage = () => {
 	}
 
 	return (
-		<div>
-			<Header openedFolder={openedFolder} setOpenedFolder={setOpenedFolder} />
+		<div className="container--home-page" onClick={clearDropDown}>
+			<Header
+				openedFolder={openedFolder}
+				setOpenedFolder={setOpenedFolder}
+				setSnackError={setSnackError}
+				showDropdown={showDropdown}
+				setShowDropdown={setShowDropdown} />
+			<Snackbar
+				open={Boolean(snackError)}
+				autoHideDuration={2000}
+				onClose={closeSnackBar}
+				message={snackError} />
 		</div>
 	);
 };

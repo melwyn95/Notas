@@ -5,19 +5,19 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Dialog from '@material-ui/core/Dialog';
 
-import doFolderAction, { FolderMenuOptions } from '../actions/doFolderAction';
+import doFolderAction, { FolderMenuOptions, RENAME_FOLDER, CREATE_FOLDER } from '../actions/doFolderAction';
 
 import IDBContext from '../../../contexts/idbContext';
 
 import FolderList from './FolderList';
-import RenameFolder from './RenameFolder'; 
+import DialogWithTextField from './DialogWithTextField';
+import DeleteFolder from './DeleteFolder';
 
-const Header = ({ openedFolder, setOpenedFolder }) => {
-	const [ anchorEl, setAnchorEl ] = useState(null);
-	const [ showDropdown, setShowDropdown ] = useState(false);
-	const [ folders, setFolders ] = useState(null);
+const Header = ({ openedFolder, setOpenedFolder, setSnackError, showDropdown, setShowDropdown }) => {
+	const [folders, setFolders] = useState(null);
+	const [anchorEl, setAnchorEl] = useState(null);
 	const { idb } = useContext(IDBContext);
-	const [ open, setOpen ] = useState(false);
+	const [open, setOpen] = useState(null);
 	const close = useCallback(() => {
 		setOpen(false);
 	}, []);
@@ -30,8 +30,7 @@ const Header = ({ openedFolder, setOpenedFolder }) => {
 					.then((db) => {
 						let tx = db.transaction('folders', 'readonly');
 						let store = tx.objectStore('folders');
-						let index = store.index('folderTimestamps');
-						return index.openCursor();
+						return store.openCursor();
 					})
 					.then(function loopFolders(cursor) {
 						if (!cursor) {
@@ -46,14 +45,17 @@ const Header = ({ openedFolder, setOpenedFolder }) => {
 					});
 			}
 		},
-		[ showDropdown ]
+		[showDropdown]
 	);
 
 	return (
 		<Fragment>
 			<div className="container--header">
 				<div className="container--dropdown">
-					<Button onClick={() => setShowDropdown(!showDropdown)}>
+					<Button onClick={(e) => {
+						e.stopPropagation();
+						setShowDropdown(!showDropdown)
+					}}>
 						<div className="dropdown-content">
 							<div className="dropdown-text">{openedFolder.name}</div>
 							<div className="dropdown-icon" />
@@ -62,7 +64,10 @@ const Header = ({ openedFolder, setOpenedFolder }) => {
 				</div>
 				{!showDropdown && (
 					<div className="container--more-options">
-						<IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+						<IconButton onClick={(e) => {
+							e.stopPropagation();
+							setAnchorEl(e.currentTarget)
+						}}>
 							<div className="more-options" />
 						</IconButton>
 					</div>
@@ -73,9 +78,8 @@ const Header = ({ openedFolder, setOpenedFolder }) => {
 							return (
 								<MenuItem
 									style={{ fontSize: 14 }}
-									onClick={() => {
+									onClick={(e) => {
 										doFolderAction(option.operation, openedFolder.id, { setOpen, close });
-										setAnchorEl(null);
 									}}
 								>
 									{option.label}
@@ -90,11 +94,25 @@ const Header = ({ openedFolder, setOpenedFolder }) => {
 					folders={folders}
 					setShowDropdown={setShowDropdown}
 					setOpenedFolder={setOpenedFolder}
+					setOpen={setOpen}
 					openedFolder={openedFolder}
 				/>
 			)}
-			<Dialog open={open} onClose={close}>
-				<RenameFolder />
+			<Dialog open={Boolean(open)} onClose={close}>
+				{
+					[RENAME_FOLDER.operation, CREATE_FOLDER.operation].includes(open) ?
+						<DialogWithTextField
+							openedFolder={openedFolder}
+							close={close}
+							setOpenedFolder={setOpenedFolder}
+							create={open === CREATE_FOLDER.operation}
+							setSnackError={setSnackError} />
+						:
+						<DeleteFolder
+							openedFolder={openedFolder}
+							close={close}
+							setOpenedFolder={setOpenedFolder} />
+				}
 			</Dialog>
 		</Fragment>
 	);
