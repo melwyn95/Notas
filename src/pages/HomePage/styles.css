@@ -118,3 +118,9 @@
     bottom: 30px;
     right: 30px;
 }
+
+.container--selectionn-header {
+    display: flex;
+    height: 42px;
+    justify-content: space-between;
+}

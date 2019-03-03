@@ -5,6 +5,7 @@ const RENAME_FOLDER = { operation: 'rename_folder' };
 const DELETE_FOLDER = { operation: 'delete_folder' };
 const CREATE_FOLDER = { operation: 'create_foler' };
 const OPEN_SETTINGS = { label: 'Open Settings', operation: 'open_settings' };
+const GET_ALL_NOTES_FOLDER = { operation: 'get_all_notes_folder' }
 
 const FolderMenuOptions = [OPEN_RENAME_FOLDER_MODAL, OPEN_DELETE_FOLDER_MODAL, OPEN_SETTINGS];
 
@@ -100,6 +101,17 @@ const doFolderAction = async (actionName, folder_id, params) => {
 				});
 			break;
 		}
+		case GET_ALL_NOTES_FOLDER.operation: {
+			const { idb, setOpenedFolder } = params;
+			idb
+				.then(async (db) => {
+					let tx = db.transaction('folders', 'readonly');
+					let store = tx.objectStore('folders');
+					let folder = await store.get(folder_id);
+					setOpenedFolder(folder);
+				});
+			break;
+		}
 		default:
 			console.log('INVALID_OPERATION');
 	}
@@ -114,6 +126,7 @@ export {
 	DELETE_FOLDER,
 	OPEN_SETTINGS,
 	CREATE_FOLDER,
+	GET_ALL_NOTES_FOLDER,
 };
 
 export default doFolderAction;

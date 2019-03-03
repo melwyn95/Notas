@@ -7,13 +7,13 @@ import { withStyles } from '@material-ui/core/styles';
 import doNoteAction, { CREATE_NOTE } from '../actions/doNoteAction';
 import IDBContext from '../../../contexts/idbContext';
 
-const AddNotes = ({ classes, openedFolder, setOpenedFolder }) => {
+const AddNotes = ({ classes, openedFolder, setOpenedFolder, show }) => {
     const { idb } = useContext(IDBContext);
     const createNote = useCallback(() => {
         doNoteAction(CREATE_NOTE.operation, { idb, openedFolder, setOpenedFolder });
     }, []);
 
-    return (<div className="container--add-notes">
+    return (show && <div className="container--add-notes">
         <Fab className={classes.fabRoot} onClick={createNote}>
             <AddIcon className={classes.iconRoot} />
         </Fab>

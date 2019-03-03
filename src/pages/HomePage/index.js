@@ -7,6 +7,9 @@ import './styles.css';
 
 import IDBContext from '../../contexts/idbContext';
 
+import doNoteAction, { GET_ALL_NOTES } from './actions/doNoteAction';
+import doFolderAction, { GET_ALL_NOTES_FOLDER } from './actions/doFolderAction';
+
 import Header from './Header'
 import SearchBar from './SearchBar';
 import NotesContainer from './NotesContainer';
@@ -16,6 +19,10 @@ const HomePage = () => {
 	const [openedFolder, setOpenedFolder] = useState(null);
 	const [snackError, setSnackError] = useState(null);
 	const [showDropdown, setShowDropdown] = useState(false);
+	const [selection, setSelection] = useState([]);
+	const [notes, setNotes] = useState([]);
+	const [fetching, setFetching] = useState(true);
+
 	const clearDropDown = useCallback(() => {
 		setShowDropdown(false);
 	}, []);
@@ -25,14 +32,13 @@ const HomePage = () => {
 	const { idb } = useContext(IDBContext);
 
 	useEffect(() => {
-		idb
-			.then(async (db) => {
-				let tx = db.transaction('folders', 'readonly');
-				let store = tx.objectStore('folders');
-				let folder = await store.get(1);
-				setOpenedFolder(folder);
-			})
+		doFolderAction(GET_ALL_NOTES_FOLDER.operation, 1, { idb, setOpenedFolder });
 	}, []);
+
+	useEffect(() => {
+		doNoteAction(GET_ALL_NOTES.operation, { idb, openedFolder, setFetching, setNotes });
+	}, [openedFolder && openedFolder.id]);
+
 
 	if (!openedFolder) {
 		return <Spinner />;
@@ -45,10 +51,22 @@ const HomePage = () => {
 				setOpenedFolder={setOpenedFolder}
 				setSnackError={setSnackError}
 				showDropdown={showDropdown}
-				setShowDropdown={setShowDropdown} />
+				setShowDropdown={setShowDropdown}
+				notes={notes}
+				selection={selection}
+				setSelection={setSelection} />
 			<SearchBar />
-			<NotesContainer openedFolder={openedFolder} />
-			<AddNotes openedFolder={openedFolder} setOpenedFolder={setOpenedFolder} />
+			<NotesContainer
+				fetching={fetching}
+				notes={notes}
+				selection={selection}
+				setSelection={setSelection} />
+			<AddNotes
+				openedFolder={openedFolder}
+				setOpenedFolder={setOpenedFolder}
+				fetching={fetching}
+				notes={notes}
+				show={selection.length === 0} />
 			<Snackbar
 				open={Boolean(snackError)}
 				autoHideDuration={2000}
