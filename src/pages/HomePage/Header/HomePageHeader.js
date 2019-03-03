@@ -85,6 +85,7 @@ const HomePageHeader = ({ openedFolder, setOpenedFolder, setSnackError, showDrop
 								</MenuItem>
 							);
 						}
+						return undefined;
 					})}
 				</Menu>
 			</div>

@@ -14,6 +14,7 @@ import Header from './Header'
 import SearchBar from './SearchBar';
 import NotesContainer from './NotesContainer';
 import AddNotes from './AddNotes';
+import BottomNotesOperations from './BottomNotesOperations';
 
 const HomePage = () => {
 	const [openedFolder, setOpenedFolder] = useState(null);
@@ -30,6 +31,8 @@ const HomePage = () => {
 		setSnackError(null);
 	}, []);
 	const { idb } = useContext(IDBContext);
+
+	const showBottomToolbar = selection.length !== 0;
 
 	useEffect(() => {
 		doFolderAction(GET_ALL_NOTES_FOLDER.operation, 1, { idb, setOpenedFolder });
@@ -66,7 +69,8 @@ const HomePage = () => {
 				setOpenedFolder={setOpenedFolder}
 				fetching={fetching}
 				notes={notes}
-				show={selection.length === 0} />
+				show={!showBottomToolbar} />
+			<BottomNotesOperations show={showBottomToolbar} />
 			<Snackbar
 				open={Boolean(snackError)}
 				autoHideDuration={2000}
