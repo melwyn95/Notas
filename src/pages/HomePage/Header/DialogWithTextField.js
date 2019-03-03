@@ -15,7 +15,7 @@ const DialogWithTextField = (props) => {
 	const operation = (create && CREATE_FOLDER.operation) || RENAME_FOLDER.operation
 
 	const { idb } = useContext(IDBContext);
-	const [value, setValue] = useState(openedFolder.name || 'Unnamed Folder');
+	const [value, setValue] = useState(create ? 'Unnamed Folder' : openedFolder.name);
 
 	return (
 		<Paper className={classes.root}>

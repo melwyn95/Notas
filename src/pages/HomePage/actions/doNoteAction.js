@@ -9,10 +9,17 @@ const doNoteAction = (action, params) => {
             const { idb, openedFolder, setOpenedFolder } = params;
             const timestamp = new Date().getTime();
             idb
-                .then((db) => {
-                    let tx = db.transaction('notes', 'readwrite');
-                    let store = tx.objectStore('notes');
-                    store.put({
+                .then(async (db) => {
+                    let tx = db.transaction(['notes', 'folders'], 'readwrite');
+                    let notesStore = tx.objectStore('notes');
+                    let foldersStore = tx.objectStore('folders');
+                    
+                    let openedFolderFromDB = await foldersStore.get(openedFolder.id);
+                    openedFolderFromDB.count += 1;
+
+                    foldersStore.put(openedFolderFromDB);
+
+                    notesStore.add({
                         color: RED.value,
                         content: '',
                         previewContent: '',
@@ -37,11 +44,12 @@ const doNoteAction = (action, params) => {
                         setFetching(true);
                         let tx = db.transaction('notes', 'readonly');
                         let store = tx.objectStore('notes');
+                        let index = store.index('notesFolderId');
                         let range = IDBKeyRange.only(openedFolder.id);
                         if (openedFolder.id === 1) {
                             range = undefined;
                         }
-                        return store.openCursor(range);
+                        return index.openCursor(range);
                     })
                     .then(function cursorLoop(cursor) {
                         if (!cursor) {
