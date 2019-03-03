@@ -17,7 +17,7 @@ export const initializeIDB = () => {
 				let foldersObjectStore = upgradeDb.createObjectStore('folders', { keyPath: 'id', autoIncrement: true });
 				foldersObjectStore.createIndex('folderNames', 'name', { unique: true });
 
-				foldersObjectStore.add({ count: 0, timestamp: new Date().getTime(), name: 'All Notes', systemFolder: true });
+				foldersObjectStore.add({ count: 1, timestamp: new Date().getTime(), name: 'All Notes', systemFolder: true });
 				foldersObjectStore.add({ count: 0, timestamp: new Date().getTime(), name: 'Trash', systemFolder: true });
 
 				let notesObjectStore = upgradeDb.createObjectStore('notes', { keyPath: 'id', autoIncrement: true });

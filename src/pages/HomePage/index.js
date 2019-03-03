@@ -33,6 +33,7 @@ const HomePage = () => {
 	const { idb } = useContext(IDBContext);
 
 	const showBottomToolbar = selection.length !== 0;
+	const isTrashFolder = openedFolder && openedFolder.id === 2;
 
 	useEffect(() => {
 		doFolderAction(GET_ALL_NOTES_FOLDER.operation, 1, { idb, setOpenedFolder });
@@ -40,7 +41,7 @@ const HomePage = () => {
 
 	useEffect(() => {
 		doNoteAction(GET_ALL_NOTES.operation, { idb, openedFolder, setFetching, setNotes });
-	}, [openedFolder && openedFolder.id]);
+	}, [openedFolder && openedFolder.count]);
 
 
 	if (!openedFolder) {
@@ -69,8 +70,13 @@ const HomePage = () => {
 				setOpenedFolder={setOpenedFolder}
 				fetching={fetching}
 				notes={notes}
-				show={!showBottomToolbar} />
-			<BottomNotesOperations show={showBottomToolbar} />
+				show={!showBottomToolbar && !isTrashFolder} />
+			<BottomNotesOperations
+				show={showBottomToolbar}
+				selection={selection}
+				openedFolder={openedFolder}
+				setSelection={setSelection}
+				setOpenedFolder={setOpenedFolder} />
 			<Snackbar
 				open={Boolean(snackError)}
 				autoHideDuration={2000}
