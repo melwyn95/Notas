@@ -58,7 +58,7 @@ const HomePageHeader = ({ openedFolder, setOpenedFolder, setSnackError, showDrop
 					}}>
 						<div className="dropdown-content">
 							<div className="dropdown-text">{openedFolder.name}</div>
-							<div className="dropdown-icon" />
+							<div className={!showDropdown ? "dropdown-icon" : "dropdown-icon dropdown-icon-rotate"} />
 						</div>
 					</Button>
 				</div>

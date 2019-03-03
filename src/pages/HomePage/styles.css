@@ -43,6 +43,12 @@
     height: 15px;
     width: 15px;
     background-size: 15px;
+    transform: rotate(0deg);
+    transition: transform .5s;
+}
+
+.dropdown-icon-rotate {
+    transform: rotate(180deg);
 }
 
 .container--more-options {
