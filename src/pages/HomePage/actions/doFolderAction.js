@@ -101,7 +101,7 @@ const doFolderAction = async (actionName, folder_id, params) => {
 			break;
 		}
 		default:
-			console.log('INVALID OPERATION');
+			console.log('INVALID_OPERATION');
 	}
 };
 

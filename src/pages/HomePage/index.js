@@ -48,7 +48,7 @@ const HomePage = () => {
 				setShowDropdown={setShowDropdown} />
 			<SearchBar />
 			<NotesContainer openedFolder={openedFolder} />
-			<AddNotes />
+			<AddNotes openedFolder={openedFolder} setOpenedFolder={setOpenedFolder} />
 			<Snackbar
 				open={Boolean(snackError)}
 				autoHideDuration={2000}

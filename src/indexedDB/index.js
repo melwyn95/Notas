@@ -27,7 +27,7 @@ export const initializeIDB = () => {
 
 				notesObjectStore.add(
 					{
-						color: WHITE.label,
+						color: WHITE.value,
 						content: DEFAULT_NOTE_TEXT,
 						previewContent: DEFAULT_NOTE_TEXT_PREVIEW,
 						heading: DEFAULT_NOTE_HEADING,

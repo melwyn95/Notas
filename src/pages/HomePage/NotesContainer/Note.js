@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 const Note = props => {
     const { note, classes } = props;
 
-    return <Card className={classes.root}>
+    return <Card className={classes.root} style={{ backgroundColor: note.color }}>
         <Typography component="h2" className={classes.heading}>
             {note.heading}
         </Typography>
@@ -21,9 +21,10 @@ const Note = props => {
 const styles = theme => ({
     root: {
         height: '150px',
-        width: '48%',
+        width: '46%',
         boxSizing: 'border-box',
         padding: '10px',
+        margin: '5px',
     },
     heading: {
         textAlign: 'center',

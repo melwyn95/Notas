@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import { withStyles } from '@material-ui/core/styles';
 
-const AddNotes = ({ classes }) => {
+import doNoteAction, { CREATE_NOTE } from '../actions/doNoteAction';
+import IDBContext from '../../../contexts/idbContext';
+
+const AddNotes = ({ classes, openedFolder, setOpenedFolder }) => {
+    const { idb } = useContext(IDBContext);
+    const createNote = useCallback(() => {
+        doNoteAction(CREATE_NOTE.operation, { idb, openedFolder, setOpenedFolder });
+    }, []);
 
     return (<div className="container--add-notes">
-        <Fab className={classes.fabRoot}>
+        <Fab className={classes.fabRoot} onClick={createNote}>
             <AddIcon className={classes.iconRoot} />
         </Fab>
     </div>);

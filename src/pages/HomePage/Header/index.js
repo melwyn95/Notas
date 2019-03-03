@@ -14,7 +14,7 @@ import DialogWithTextField from './DialogWithTextField';
 import DeleteFolder from './DeleteFolder';
 
 const Header = ({ openedFolder, setOpenedFolder, setSnackError, showDropdown, setShowDropdown }) => {
-	const [folders, setFolders] = useState(null);
+	const [folders, setFolders] = useState([]);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const { idb } = useContext(IDBContext);
 	const [open, setOpen] = useState(null);
@@ -62,16 +62,14 @@ const Header = ({ openedFolder, setOpenedFolder, setSnackError, showDropdown, se
 						</div>
 					</Button>
 				</div>
-				{!showDropdown && (
-					<div className="container--more-options">
-						<IconButton onClick={(e) => {
-							e.stopPropagation();
-							setAnchorEl(e.currentTarget)
-						}}>
-							<div className="more-options" />
-						</IconButton>
-					</div>
-				)}
+				<div className="container--more-options" style={(!showDropdown ? { maxHeight: 0 } : {})}>
+					<IconButton onClick={(e) => {
+						e.stopPropagation();
+						setAnchorEl(e.currentTarget)
+					}}>
+						<div className="more-options" />
+					</IconButton>
+				</div>
 				<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={(e) => setAnchorEl(null)}>
 					{FolderMenuOptions.map((option) => {
 						if (!openedFolder.systemFolder || option.operation === 'open_settings') {
@@ -89,15 +87,14 @@ const Header = ({ openedFolder, setOpenedFolder, setSnackError, showDropdown, se
 					})}
 				</Menu>
 			</div>
-			{showDropdown && (
-				<FolderList
-					folders={folders}
-					setShowDropdown={setShowDropdown}
-					setOpenedFolder={setOpenedFolder}
-					setOpen={setOpen}
-					openedFolder={openedFolder}
-				/>
-			)}
+			<FolderList
+				folders={folders}
+				setShowDropdown={setShowDropdown}
+				setOpenedFolder={setOpenedFolder}
+				setOpen={setOpen}
+				openedFolder={openedFolder}
+				show={showDropdown}
+			/>
 			<Dialog open={Boolean(open)} onClose={close}>
 				{
 					[RENAME_FOLDER.operation, CREATE_FOLDER.operation].includes(open) ?

@@ -9,14 +9,14 @@ const selectFolder = (folder, setOpenedFolder, setShowDropdown) => {
 	setOpenedFolder(folder);
 };
 
-const FolderList = ({ folders, setShowDropdown, setOpenedFolder, openedFolder, setOpen }) => {
-	if (!folders) {
+const FolderList = ({ folders, setShowDropdown, setOpenedFolder, openedFolder, setOpen, show }) => {
+	if (!folders && show) {
 		return <Spinner />;
 	}
 
 	return (
-		<div className="container--list-item">
-			{folders.map((folder) => (
+		<div className="container--list-item" style={(show ? {} : { maxHeight: 0, opacity: 0 })}>
+			{show && folders.map((folder) => (
 				<Fragment key={`list-item-${folder.id}`}>
 					<div className="list-item" onClick={() => selectFolder(folder, setOpenedFolder, setShowDropdown)}>
 						<div
@@ -37,14 +37,14 @@ const FolderList = ({ folders, setShowDropdown, setOpenedFolder, openedFolder, s
 					<div className="separator" />
 				</Fragment>
 			))}
-			<div className="list-item" key="new-folder"
+			{show && <div className="list-item" key="new-folder"
 				onClick={() => {
 					doFolderAction(OPEN_CREATE_FOLDER_MODAL.operation, undefined, { setShowDropdown, setOpen })
 				}}>
 				<div className="new-folder-container">
 					<div className="plus-icon">+</div>New Folder
 				</div>
-			</div>
+			</div>}
 		</div>
 	);
 };
