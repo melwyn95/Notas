@@ -102,7 +102,13 @@ const doNoteAction = (action, params) => {
                     return tx.complete;
                 })
                 .then(() => {
-                    setOpenedFolder(openedFolder);
+                    idb
+                        .then(async (db) => {
+                            let tx = db.transaction('folders', 'readonly');
+                            let store = tx.objectStore('folders');
+                            let folder = await store.get(openedFolder.id);
+                            setOpenedFolder(folder);
+                        });
                 });
             break;
         }
