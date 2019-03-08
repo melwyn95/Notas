@@ -19,7 +19,7 @@ const doNoteAction = (action, params) => {
 			const timestamp = new Date().getTime();
 			idb
 				.then(async (db) => {
-					let tx = db.transaction([ 'notes', 'folders' ], 'readwrite');
+					let tx = db.transaction(['notes', 'folders'], 'readwrite');
 					let notesStore = tx.objectStore('notes');
 					let foldersStore = tx.objectStore('folders');
 
@@ -80,7 +80,7 @@ const doNoteAction = (action, params) => {
 			const { idb, selection, openedFolder, setOpenedFolder } = params;
 			idb
 				.then(async (db) => {
-					let tx = db.transaction([ 'notes', 'folders' ], 'readwrite');
+					let tx = db.transaction(['notes', 'folders'], 'readwrite');
 					let notesObjectStore = tx.objectStore('notes');
 					let foldersObjectStore = tx.objectStore('folders');
 
@@ -109,7 +109,7 @@ const doNoteAction = (action, params) => {
 					return tx.complete;
 				})
 				.then(() => {
-                    idb.then((db) => updateOpenedFolder(db, openedFolder.id, setOpenedFolder));
+					idb.then((db) => updateOpenedFolder(db, openedFolder.id, setOpenedFolder));
 				});
 			break;
 		}
@@ -117,7 +117,7 @@ const doNoteAction = (action, params) => {
 			const { idb, selection, openedFolder, setOpenedFolder, moveToFolderId } = params;
 			idb
 				.then(async (db) => {
-					let tx = db.transaction('folders, notes', 'readwrite');
+					let tx = db.transaction(['folders', 'notes'], 'readwrite');
 					let notesStore = tx.objectStore('notes');
 					let foldersStore = tx.objectStore('folders');
 

@@ -42,8 +42,8 @@ const Note = props => {
 
 const styles = theme => ({
     root: {
-        height: '150px',
-        width: '46%',
+        height: '180px',
+        width: '140px',
         boxSizing: 'border-box',
         padding: '10px',
         margin: '5px',

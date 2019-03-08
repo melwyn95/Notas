@@ -6,6 +6,7 @@ const DELETE_FOLDER = { operation: 'delete_folder' };
 const CREATE_FOLDER = { operation: 'create_foler' };
 const OPEN_SETTINGS = { label: 'Open Settings', operation: 'open_settings' };
 const GET_ALL_NOTES_FOLDER = { operation: 'get_all_notes_folder' }
+const GET_ALL_FOLDERS = { operation: 'get_all_folders' };
 
 const FolderMenuOptions = [OPEN_RENAME_FOLDER_MODAL, OPEN_DELETE_FOLDER_MODAL, OPEN_SETTINGS];
 
@@ -112,6 +113,30 @@ const doFolderAction = async (actionName, folder_id, params) => {
 				});
 			break;
 		}
+		case GET_ALL_FOLDERS.operation: {
+			const { idb, setFolders, foldersToExclude = [] } = params;
+			const idbFolders = [];
+			return idb
+				.then((db) => {
+					let tx = db.transaction('folders', 'readonly');
+					let store = tx.objectStore('folders');
+					return store.openCursor();
+				})
+				.then(function loopFolders(cursor) {
+					if (!cursor) {
+						return;
+					}
+					if (foldersToExclude.includes(cursor.value.id)) {
+						return cursor.continue().then(loopFolders);
+					}
+					let { value } = cursor;
+					idbFolders.push(value);
+					return cursor.continue().then(loopFolders);
+				})
+				.then(() => {
+					setFolders(idbFolders);
+				});
+		}
 		default:
 			console.log('INVALID_OPERATION');
 	}
@@ -127,6 +152,7 @@ export {
 	OPEN_SETTINGS,
 	CREATE_FOLDER,
 	GET_ALL_NOTES_FOLDER,
+	GET_ALL_FOLDERS
 };
 
 export default doFolderAction;

@@ -116,7 +116,7 @@
 }
 
 .container--notes {
-    padding: 0 5px 10px 5px;
+    padding: 0 10px 10px 10px;
     height: calc(100vh - 92px);
     overflow: auto;
     display: flex;
@@ -144,6 +144,7 @@
     background-color: #f9f9f9;
     display: flex;
     transition: height .5s;
+    border-radius: 5px 5px 0 0;
 }
 
 .container--bottom-tool-button {

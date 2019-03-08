@@ -5,7 +5,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Dialog from '@material-ui/core/Dialog';
 
-import doFolderAction, { FolderMenuOptions, RENAME_FOLDER, CREATE_FOLDER } from '../actions/doFolderAction';
+import doFolderAction, { FolderMenuOptions, RENAME_FOLDER, CREATE_FOLDER, GET_ALL_FOLDERS } from '../actions/doFolderAction';
 
 import IDBContext from '../../../contexts/idbContext';
 
@@ -13,107 +13,29 @@ import FolderList from './FolderList';
 import DialogWithTextField from './DialogWithTextField';
 import DeleteFolder from './DeleteFolder';
 
-// TODO: move to utils
-const getAllFolders = (idb, setFolders, foldersToExclude) => {
-	const idbFolders = [];
-	return idb
-		.then((db) => {
-			let tx = db.transaction('folders', 'readonly');
-			let store = tx.objectStore('folders');
-			return store.openCursor();
-		})
-		.then(function loopFolders(cursor) {
-			if (!cursor || foldersToExclude.includes(cursor.value.id)) {
-				return;
-			}
-			let { value } = cursor;
-			idbFolders.push(value);
-			return cursor.continue().then(loopFolders);
-		})
-		.then(() => {
-			setFolders(idbFolders);
-		});
-};
-
 const HomePageHeader = ({ openedFolder, setOpenedFolder, setSnackError, showDropdown, setShowDropdown }) => {
-	const [ folders, setFolders ] = useState([]);
-	const [ anchorEl, setAnchorEl ] = useState(null);
+	const [folders, setFolders] = useState([]);
+	const [anchorEl, setAnchorEl] = useState(null);
 	const { idb } = useContext(IDBContext);
-	const [ open, setOpen ] = useState(null);
+	const [open, setOpen] = useState(null);
 	const close = useCallback(() => {
 		setOpen(false);
+		setAnchorEl(null);
 	}, []);
 
 	useEffect(
 		() => {
-			if (showDropdown) {
-				const idbFolders = [];
-				idb
-					.then((db) => {
-						let tx = db.transaction('folders', 'readonly');
-						let store = tx.objectStore('folders');
-						return store.openCursor();
-					})
-					.then(function loopFolders(cursor) {
-						if (!cursor) {
-							return;
-						}
-						let { value } = cursor;
-						idbFolders.push(value);
-						return cursor.continue().then(loopFolders);
-					})
-					.then(() => {
-						setFolders(idbFolders);
-					});
-			}
+			doFolderAction(GET_ALL_FOLDERS.operation, undefined, { idb, setFolders });
 		},
-		[ openedFolder ]
+		[openedFolder]
 	);
 
 	return (
 		<Fragment>
 			<div className="container--header">
-				<div className="container--dropdown">
-					<Button
-						onClick={(e) => {
-							e.stopPropagation();
-							setShowDropdown(!showDropdown);
-						}}
-					>
-						<div className="dropdown-content">
-							<div className="dropdown-text">{openedFolder.name}</div>
-							<div className={!showDropdown ? 'dropdown-icon' : 'dropdown-icon dropdown-icon-rotate'} />
-						</div>
-					</Button>
-				</div>
-				<div className="container--more-options" style={!showDropdown ? { maxHeight: 0 } : {}}>
-					<IconButton
-						onClick={(e) => {
-							e.stopPropagation();
-							setAnchorEl(e.currentTarget);
-							setShowDropdown(false);
-						}}
-					>
-						<div className="more-options" />
-					</IconButton>
-				</div>
-				<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={(e) => setAnchorEl(null)}>
-					{FolderMenuOptions.map((option) => {
-						if (!openedFolder.systemFolder || option.operation === 'open_settings') {
-							return (
-								<MenuItem
-									style={{ fontSize: 14 }}
-									onClick={(e) => {
-										doFolderAction(option.operation, openedFolder.id, { setOpen, close });
-									}}
-								>
-									{option.label}
-								</MenuItem>
-							);
-						}
-						return undefined;
-					})}
-				</Menu>
+				<FolderNameButton {...{ setShowDropdown, showDropdown, openedFolder }} />
+				<MoreOptions {...{ showDropdown, setShowDropdown, setAnchorEl }} />
+				<Options {...{ anchorEl, setAnchorEl, openedFolder, setOpen, close }} />
 			</div>
 			<FolderList
 				folders={folders}
@@ -124,7 +46,7 @@ const HomePageHeader = ({ openedFolder, setOpenedFolder, setSnackError, showDrop
 				show={showDropdown}
 			/>
 			<Dialog open={Boolean(open)} onClose={close}>
-				{[ RENAME_FOLDER.operation, CREATE_FOLDER.operation ].includes(open) ? (
+				{[RENAME_FOLDER.operation, CREATE_FOLDER.operation].includes(open) ? (
 					<DialogWithTextField
 						openedFolder={openedFolder}
 						close={close}
@@ -133,13 +55,58 @@ const HomePageHeader = ({ openedFolder, setOpenedFolder, setSnackError, showDrop
 						setSnackError={setSnackError}
 					/>
 				) : (
-					<DeleteFolder openedFolder={openedFolder} close={close} setOpenedFolder={setOpenedFolder} />
-				)}
+						<DeleteFolder openedFolder={openedFolder} close={close} setOpenedFolder={setOpenedFolder} />
+					)}
 			</Dialog>
 		</Fragment>
 	);
 };
 
-export { getAllFolders };
+const FolderNameButton = ({ setShowDropdown, showDropdown, openedFolder: { name } }) =>
+	(<div className="container--dropdown">
+		<Button
+			onClick={(e) => {
+				e.stopPropagation();
+				setShowDropdown(!showDropdown);
+			}}
+		>
+			<div className="dropdown-content">
+				<div className="dropdown-text">{name}</div>
+				<div className={!showDropdown ? 'dropdown-icon' : 'dropdown-icon dropdown-icon-rotate'} />
+			</div>
+		</Button>
+	</div>);
+
+const MoreOptions = ({ showDropdown, setShowDropdown, setAnchorEl }) =>
+	(<div className="container--more-options" style={!showDropdown ? { maxHeight: 0 } : {}}>
+		<IconButton
+			onClick={(e) => {
+				e.stopPropagation();
+				setAnchorEl(e.currentTarget);
+				setShowDropdown(false);
+			}}
+		>
+			<div className="more-options" />
+		</IconButton>
+	</div>);
+
+const Options = ({ anchorEl, setAnchorEl, openedFolder, setOpen, close }) =>
+	(<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={(e) => setAnchorEl(null)}>
+		{FolderMenuOptions.map((option) => {
+			if (!openedFolder.systemFolder || option.operation === 'open_settings') {
+				return (
+					<MenuItem
+						style={{ fontSize: 14 }}
+						onClick={(e) => {
+							doFolderAction(option.operation, openedFolder.id, { setOpen, close });
+						}}
+					>
+						{option.label}
+					</MenuItem>
+				);
+			}
+			return undefined;
+		})}
+	</Menu>);
 
 export default HomePageHeader;

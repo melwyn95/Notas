@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react';
+import React, { useState, useContext, useEffect, useCallback, useMemo } from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
 
 import Spinner from '../../components/Spinner';
@@ -6,6 +6,8 @@ import Spinner from '../../components/Spinner';
 import './styles.css';
 
 import IDBContext from '../../contexts/idbContext';
+
+import { options } from '../../application/noteOperations';
 
 import doNoteAction, { GET_ALL_NOTES } from './actions/doNoteAction';
 import doFolderAction, { GET_ALL_NOTES_FOLDER } from './actions/doFolderAction';
@@ -17,6 +19,8 @@ import AddNotes from './AddNotes';
 import BottomNotesOperations from './BottomNotesOperations';
 
 const HomePage = () => {
+	const { idb } = useContext(IDBContext);
+
 	const [openedFolder, setOpenedFolder] = useState(null);
 	const [snackError, setSnackError] = useState(null);
 	const [showDropdown, setShowDropdown] = useState(false);
@@ -24,13 +28,14 @@ const HomePage = () => {
 	const [notes, setNotes] = useState([]);
 	const [fetching, setFetching] = useState(true);
 
+	const bottomOptions = useMemo(() => options(openedFolder), [openedFolder]);
+
 	const clearDropDown = useCallback(() => {
 		setShowDropdown(false);
 	}, []);
 	const closeSnackBar = useCallback(() => {
 		setSnackError(null);
 	}, []);
-	const { idb } = useContext(IDBContext);
 
 	const showBottomToolbar = selection.length !== 0;
 	const isTrashFolder = openedFolder && openedFolder.id === 2;
@@ -72,6 +77,7 @@ const HomePage = () => {
 				notes={notes}
 				show={!showBottomToolbar && !isTrashFolder} />
 			<BottomNotesOperations
+				options={bottomOptions}
 				show={showBottomToolbar}
 				selection={selection}
 				openedFolder={openedFolder}
