@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 
 import Spinner from '../../../components/Spinner';
 
-import doFolderAction, { OPEN_CREATE_FOLDER_MODAL } from '../actions/doFolderAction';
+import doFolderAction, { OPEN_CREATE_FOLDER_MODAL } from '../../../actions/doFolderAction';
 
 const selectFolder = (folder, setOpenedFolder, setShowDropdown) => {
 	setShowDropdown(false);

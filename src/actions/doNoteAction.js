@@ -1,9 +1,12 @@
-import { RED } from '../../../contants/noteColors';
+import { WHITE } from '../contants/noteColors';
 
 const CREATE_NOTE = { operation: 'create_note' };
 const GET_ALL_NOTES = { operation: 'get_all_notes' };
 const DELETE_NOTES = { operation: 'delete_notes' };
 const MOVE_NOTES = { operation: 'move_notes' };
+
+const GET_NOTE_BY_ID = { operation: 'get_note_by_id' };
+const CHANGE_NOTE_COLOR = { operation: 'change_note_color' }
 
 const updateOpenedFolder = async (db, folderId, setOpenedFolder) => {
 	let tx = db.transaction('folders', 'readonly');
@@ -29,7 +32,7 @@ const doNoteAction = (action, params) => {
 					foldersStore.put(openedFolderFromDB);
 
 					notesStore.add({
-						color: RED.value,
+						color: WHITE.label,
 						content: '',
 						previewContent: '',
 						heading: '',
@@ -143,11 +146,47 @@ const doNoteAction = (action, params) => {
 				});
 			break;
 		}
+		case GET_NOTE_BY_ID.operation: {
+			const { noteId, idb, setNote } = params;
+			return idb
+				.then(async db => {
+					let tx = db.transaction(['notes'], 'readonly');
+					let store = tx.objectStore('notes');
+					let note = await store.get(Number.parseInt(noteId));
+					setNote(note);
+				});
+		}
+		case CHANGE_NOTE_COLOR.operation: {
+			const { note, idb, setNote, color } = params;
+			return idb.then(async (db) => {
+				let tx = db.transaction(['notes'], 'readwrite');
+				let store = tx.objectStore('notes');
+				let dBnote = await store.get(note.id);
+				dBnote.color = color;
+				store.put(dBnote);
+				return tx.complete;
+			}).then(() => {
+				idb.then(async db => {
+					let tx = db.transaction(['notes'], 'readwrite');
+					let store = tx.objectStore('notes');
+					let dBnote = await store.get(note.id);
+					setNote(dBnote);
+				})
+			});
+		}
 		default:
 			console.log('INVALID_OPERATION');
 	}
 };
 
-export { CREATE_NOTE, GET_ALL_NOTES, DELETE_NOTES, MOVE_NOTES };
+export {
+	CREATE_NOTE,
+	GET_ALL_NOTES,
+	DELETE_NOTES,
+	MOVE_NOTES,
+
+	GET_NOTE_BY_ID,
+	CHANGE_NOTE_COLOR,
+};
 
 export default doNoteAction;

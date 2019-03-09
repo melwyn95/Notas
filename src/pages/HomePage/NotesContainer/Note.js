@@ -7,36 +7,44 @@ import CheckCircleOutline from '@material-ui/icons/RadioButtonUnchecked'
 import CheckCirlce from '@material-ui/icons/CheckCircleRounded';
 import { withStyles } from '@material-ui/core/styles';
 
-const Note = props => {
-    const { note, classes, selection, setSelection } = props;
+import { getColorFromLabel } from '../../../contants/noteColors';
 
-    const checkCallback = useCallback((e, checked) => {
-        if (checked) {
-            setSelection([...selection, note.id]);
-        } else {
-            setSelection(selection.filter(noteId => noteId !== note.id));
-        }
-    }, [selection]);
+const cardRootStyle = ({ color }) => ({ backgroundColor: getColorFromLabel(color, 'value'), position: 'relative' });
+
+const Note = props => {
+    const { note, note: { previewContent }, classes, selection, setSelection, history } = props;
+
     const isCheceked = useMemo(() => selection.includes(note.id), [selection]);
 
-    return <Card className={classes.root} style={{ backgroundColor: note.color, position: 'relative' }}>
-        <Typography component="h2" className={classes.heading}>
-            {note.heading}
-        </Typography>
-        <Typography component="p" className={classes.content}>
-            {note.previewContent}
-        </Typography>
+    const checkCallback = useCallback((e) => {
+        e.stopPropagation();
+        if (isCheceked) {
+            setSelection(selection.filter(noteId => noteId !== note.id));
+        } else {
+            setSelection([...selection, note.id]);
+        }
+    }, [selection]);
+    const noteClicked = useCallback(() => {
+        history.push(`/note/${note.id}`);
+    }, [])
+
+    return <Card className={classes.root} style={cardRootStyle(note)} onClick={noteClicked}>
+        <p className={classes.content}>
+            <strong style={{ color: '#000' }}>{previewContent.substr(0, 21)}</strong>
+            {previewContent.substr(21)}
+        </p>
         {/* TODO: Time Stamp */}
         <Checkbox style={{
             position: 'absolute',
             bottom: 0,
             right: 0,
             padding: '5px',
-            }}
+            zIndex: '2',
+        }}
             checked={isCheceked}
             icon={<CheckCircleOutline style={{ color: '#1e88e5' }} />}
             checkedIcon={<CheckCirlce style={{ color: '#1e88e5' }} />}
-            onChange={checkCallback} />
+            onClick={checkCallback} />
     </Card>
 }
 
@@ -48,13 +56,12 @@ const styles = theme => ({
         padding: '10px',
         margin: '5px',
     },
-    heading: {
-        textAlign: 'center',
-        fontWeight: 700,
-        fontSize: '16px',
-    },
     content: {
         color: '#555',
+        fontSize: '14px',
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        height: 'calc(100% - 35px)',
     }
 });
 

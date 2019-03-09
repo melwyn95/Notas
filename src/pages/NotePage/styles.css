@@ -1,0 +1,21 @@
+.container--note-page {
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box
+}
+
+
+
+
+.container--header-toolbar {
+    display: flex;   
+}
+
+.container--circle-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 25px;
+    width: 25px;
+    margin-left: auto;
+}

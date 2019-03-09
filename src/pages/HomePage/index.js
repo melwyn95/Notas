@@ -9,8 +9,8 @@ import IDBContext from '../../contexts/idbContext';
 
 import { options } from '../../application/noteOperations';
 
-import doNoteAction, { GET_ALL_NOTES } from './actions/doNoteAction';
-import doFolderAction, { GET_ALL_NOTES_FOLDER } from './actions/doFolderAction';
+import doNoteAction, { GET_ALL_NOTES } from './../../actions/doNoteAction';
+import doFolderAction, { GET_ALL_NOTES_FOLDER } from './../../actions/doFolderAction';
 
 import Header from './Header'
 import SearchBar from './SearchBar';
@@ -63,6 +63,7 @@ const HomePage = () => {
 				setShowDropdown={setShowDropdown}
 				notes={notes}
 				selection={selection}
+				clearDropDown={clearDropDown}
 				setSelection={setSelection} />
 			<SearchBar />
 			<NotesContainer

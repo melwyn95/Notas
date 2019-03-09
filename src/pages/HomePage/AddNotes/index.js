@@ -4,7 +4,7 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import { withStyles } from '@material-ui/core/styles';
 
-import doNoteAction, { CREATE_NOTE } from '../actions/doNoteAction';
+import doNoteAction, { CREATE_NOTE } from '../../../actions/doNoteAction';
 import IDBContext from '../../../contexts/idbContext';
 
 const AddNotes = ({ classes, openedFolder, setOpenedFolder, show }) => {

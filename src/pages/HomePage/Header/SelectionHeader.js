@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 
 import Typography from '@material-ui/core/Typography';
 import Clear from '@material-ui/icons/Clear';
@@ -6,7 +6,7 @@ import SelectAll from '@material-ui/icons/DoneAll';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 
-const SelectionHeader = ({ selection, setSelection, notes, classes }) => {
+const SelectionHeader = ({ selection, setSelection, clearDropDown, notes, classes }) => {
     const clearSelectionCallback = useCallback(() => {
         setSelection([]);
     }, []);
@@ -18,6 +18,8 @@ const SelectionHeader = ({ selection, setSelection, notes, classes }) => {
             setSelection(notes.map(note => note.id));
         }
     }, [selection]);
+
+    useEffect(() => clearDropDown(), []);
 
     const allNotesSelected = useMemo(() => notes.length === selection.length, [selection]);
 

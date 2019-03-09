@@ -8,15 +8,16 @@ import Dialog from '@material-ui/core/Dialog';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
 import IDBContext from '../../../contexts/idbContext';
 
 import { OPTION_MOVE, OPTION_DELETE, OPTION_RESTORE } from '../../../application/noteOperations';
-import doNoteAction, { DELETE_NOTES, MOVE_NOTES } from '../actions/doNoteAction';
-import doFolderAction, { GET_ALL_FOLDERS } from '../actions/doFolderAction';
+import doNoteAction, { DELETE_NOTES, MOVE_NOTES } from '../../../actions/doNoteAction';
+import doFolderAction, { GET_ALL_FOLDERS, OPEN_CREATE_FOLDER_MODAL } from '../../../actions/doFolderAction';
 
-const BottomNotesOperations = ({ classes, options, show, openedFolder, selection, setOpenedFolder, setSelection }) => {
+const BottomNotesOperations = ({ classes, options, show, openedFolder, selection, setOpenedFolder, setSelection, setCreateDialogOpen }) => {
 	const { idb } = useContext(IDBContext);
 	const [open, setOpen] = useState(false);
 	const [folders, setFolders] = useState([]);
@@ -70,11 +71,21 @@ const BottomNotesOperations = ({ classes, options, show, openedFolder, selection
 						{...getBottomOptionProps(option)} />)
 			}
 			<Dialog open={open} onClose={closeDialog} scroll="paper">
-				<List>
+				<ListItem>
+					<ListItemText primary='Select Folder' classes={{ primary: classes.flexJustifyCenter }} />
+				</ListItem>
+				<Divider />
+				<List style={{ maxHeight: '80vh', padding: 0 }}>
 					{folders.map(folder => (
-						<ListItem button onClick={() => moveToCallback(folder.id)} key={folder.id}>
-							<ListItemText primary={folder.name} />
-						</ListItem>
+						<>
+							<ListItem
+								button
+								classes={{ root: classes.flexJustifyCenter }}
+								onClick={() => moveToCallback(folder.id)} key={folder.id}>
+								<ListItemText primary={folder.name} classes={{ primary: classes.listItemPrimary }} />
+							</ListItem>
+							<Divider />
+						</>
 					))}
 				</List>
 			</Dialog>
@@ -94,6 +105,16 @@ const styles = (theme) => ({
 	buttonRoot: {
 		width: '100%',
 		height: '100%'
+	},
+	listItemPrimary: {
+		maxWidth: '175px',
+		whiteSpace: 'nowrap',
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+	},
+	flexJustifyCenter: {
+		display: 'flex',
+		justifyContent: 'center',
 	}
 });
 

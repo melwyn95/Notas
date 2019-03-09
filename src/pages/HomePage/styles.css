@@ -36,6 +36,10 @@
     margin: 0 5px;
     text-transform: none;
     font-weight: 700;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 200px;
+    white-space: nowrap;
 }
 
 .dropdown-icon {
@@ -67,7 +71,7 @@
 .container--list-item {
     border-bottom: 1px solid #eee;
     background: #fff;
-    z-index: 2;
+    z-index: 10;
     position: fixed;
     width: 100%;
     border-radius: 0 0 5px 5px;
@@ -92,6 +96,13 @@
 
 .list-item-label__bold {
     font-weight: 700;
+}
+
+.list-item-label {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .list-item:last-child {

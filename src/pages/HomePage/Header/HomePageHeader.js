@@ -5,7 +5,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Dialog from '@material-ui/core/Dialog';
 
-import doFolderAction, { FolderMenuOptions, RENAME_FOLDER, CREATE_FOLDER, GET_ALL_FOLDERS } from '../actions/doFolderAction';
+import doFolderAction, { FolderMenuOptions, RENAME_FOLDER, CREATE_FOLDER, GET_ALL_FOLDERS } from '../../../actions/doFolderAction';
 
 import IDBContext from '../../../contexts/idbContext';
 

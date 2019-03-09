@@ -12,7 +12,7 @@ const Spinner = props => {
         justifyContent: 'center',
         alignItems: 'center',
     }}>
-        <CircularProgress className={classes.primary} {...props}/>
+        <CircularProgress className={classes.root} {...props}/>
         </div>);
 }
 
@@ -22,7 +22,7 @@ Spinner.propTypes = {
 
 // TODO: fix this
 const styles = theme => ({
-    primary: {
+    root: {
         color: '#969696',
     }
 });

@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 
 import IDBContext from '../../../contexts/idbContext';
 
-import doFolderAction, { DELETE_FOLDER } from '../actions/doFolderAction';
+import doFolderAction, { DELETE_FOLDER } from '../../../actions/doFolderAction';
 
 const DeleteFolder = (props) => {
     const { classes, close } = props;

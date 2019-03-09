@@ -3,9 +3,7 @@
 import { openDb } from 'idb';
 import { WHITE } from '../contants/noteColors';
 
-const DEFAULT_NOTE_TEXT = 'This is supposed to be a long long long note';
-const DEFAULT_NOTE_TEXT_PREVIEW = DEFAULT_NOTE_TEXT.substr(0, 20);
-const DEFAULT_NOTE_HEADING = 'Sample Note';
+const DEFAULT_NOTE_TEXT = 'This is supposed to be a long long long note asdasdasdasdadsasddasdasddasd';
 
 const timestamp = new Date().getTime();
 
@@ -27,10 +25,9 @@ export const initializeIDB = () => {
 
 				notesObjectStore.add(
 					{
-						color: WHITE.value,
+						color: WHITE.label,
 						content: DEFAULT_NOTE_TEXT,
-						previewContent: DEFAULT_NOTE_TEXT_PREVIEW,
-						heading: DEFAULT_NOTE_HEADING,
+						previewContent: DEFAULT_NOTE_TEXT.substr(0, 80),
 						folderId: 1,
 						creationTimestamp: timestamp,
 						lastModifiedTimestamp: timestamp,
