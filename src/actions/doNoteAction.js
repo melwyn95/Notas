@@ -1,3 +1,8 @@
+import { Value } from 'slate';
+import Plain from 'slate-plain-serializer';
+
+import defaultContent from '../contants/noteDefaultValue.json';
+
 import { WHITE } from '../contants/noteColors';
 
 const CREATE_NOTE = { operation: 'create_note' };
@@ -6,7 +11,8 @@ const DELETE_NOTES = { operation: 'delete_notes' };
 const MOVE_NOTES = { operation: 'move_notes' };
 
 const GET_NOTE_BY_ID = { operation: 'get_note_by_id' };
-const CHANGE_NOTE_COLOR = { operation: 'change_note_color' }
+const CHANGE_NOTE_COLOR = { operation: 'change_note_color' };
+const SAVE_NOTE = { operation: 'save_note' };
 
 const updateOpenedFolder = async (db, folderId, setOpenedFolder) => {
 	let tx = db.transaction('folders', 'readonly');
@@ -18,7 +24,7 @@ const updateOpenedFolder = async (db, folderId, setOpenedFolder) => {
 const doNoteAction = (action, params) => {
 	switch (action) {
 		case CREATE_NOTE.operation: {
-			const { idb, openedFolder, setOpenedFolder } = params;
+			const { idb, openedFolder, setOpenedFolder, changeRoute } = params;
 			const timestamp = new Date().getTime();
 			idb
 				.then(async (db) => {
@@ -35,6 +41,7 @@ const doNoteAction = (action, params) => {
 						color: WHITE.label,
 						content: '',
 						previewContent: '',
+						structuredContent: defaultContent,
 						heading: '',
 						folderId: openedFolder.id,
 						creationTimestamp: timestamp,
@@ -44,6 +51,13 @@ const doNoteAction = (action, params) => {
 				})
 				.then(() => {
 					setOpenedFolder(openedFolder);
+					idb.then(async db => {
+						let tx = db.transaction(['notes'], 'readonly');
+						let store = tx.objectStore('notes');
+						let index = store.index('notesCreationTimestamp');
+						let note = await index.get(timestamp);
+						changeRoute(note.id);
+					});
 				});
 			break;
 		}
@@ -147,12 +161,13 @@ const doNoteAction = (action, params) => {
 			break;
 		}
 		case GET_NOTE_BY_ID.operation: {
-			const { noteId, idb, setNote } = params;
+			const { noteId, idb, setNote, setValue } = params;
 			return idb
 				.then(async db => {
 					let tx = db.transaction(['notes'], 'readonly');
 					let store = tx.objectStore('notes');
 					let note = await store.get(Number.parseInt(noteId));
+					setValue(Value.fromJSON(note.structuredContent));
 					setNote(note);
 				});
 		}
@@ -174,6 +189,27 @@ const doNoteAction = (action, params) => {
 				})
 			});
 		}
+		case SAVE_NOTE.operation: {
+			const { idb, note: { id, folderId }, value } = params;
+			const serializedContent = Plain.serialize(value);
+			idb.then(async db => {
+				let tx = db.transaction(['notes', 'folders'], 'readwrite');
+				let notesStore = tx.objectStore('notes');
+				let foldersStore = tx.objectStore('folders');
+				let note = await notesStore.get(id);
+				let folder = await foldersStore.get(folderId);
+				let timestamp = new Date().getTime();
+				note.content = serializedContent;
+				note.previewContent = serializedContent.substr(0, 80);
+				note.structuredContent = value.toJSON();
+				note.lastModifiedTimestamp = timestamp;
+				folder.timestamp = timestamp;
+				notesStore.put(note);
+				foldersStore.put(folder);
+				return tx.complete;
+			})
+			return;
+		}
 		default:
 			console.log('INVALID_OPERATION');
 	}
@@ -187,6 +223,7 @@ export {
 
 	GET_NOTE_BY_ID,
 	CHANGE_NOTE_COLOR,
+	SAVE_NOTE,
 };
 
 export default doNoteAction;

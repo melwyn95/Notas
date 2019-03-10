@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import Popper from '@material-ui/core/Popper';
 
@@ -7,7 +7,8 @@ import Done from '@material-ui/icons/Done';
 import MoreVert from '@material-ui/icons/MoreVert';
 import Undo from '@material-ui/icons/Undo';
 import Redo from '@material-ui/icons/Redo';
-import TextFormat from '@material-ui/icons/TextFormat';
+
+import ColorSelector from '../NoteHeaderToolbar/ColorSelector';
 
 import { getColorFromLabel } from '../../../contants/noteColors';
 
@@ -15,18 +16,26 @@ import Circle from './Circle';
 
 const iconSize = color => ({ fontSize: 25, color: getColorFromLabel(color, 'optionColor') });
 
-const NoteHeaderToolbar = ({ anchorEl, iconClick, backButtonClick, ToolsComponent, noteColor }) => {
+const NoteHeaderToolbar = ({ anchorEl, iconClick, backButtonClick, doneButtonClick, noteColor, note, setNote, editorRef }) => {
+
+    const undo = useCallback((e) => {
+        e.preventDefault();
+        editorRef.current.undo();
+    }, []);
+    const redo = useCallback((e) => {
+        e.preventDefault();
+        editorRef.current.redo();
+    }, []);
 
     return (<div className="container--header-toolbar">
         <KeyboardArrowLeft style={iconSize(noteColor)} onClick={backButtonClick} />
         <Circle color={getColorFromLabel(noteColor, 'circleColor')} onClick={(e) => iconClick(e, 'change_color')} />
-        <TextFormat style={{ ...iconSize(noteColor), marginRight: 5 }} onClick={(e) => iconClick(e, 'rich_text_options')} />
-        <Undo style={{ ...iconSize(noteColor), marginRight: 5 }} />
-        <Redo style={{ ...iconSize(noteColor), marginRight: 5 }} />
-        <Done style={{ ...iconSize(noteColor), marginRight: 5, marginLeft: 5 }} />
+        <Undo style={{ ...iconSize(noteColor), marginRight: 10 }} onClick={undo} />
+        <Redo style={{ ...iconSize(noteColor), marginRight: 10 }} onClick={redo} />
+        <Done style={{ ...iconSize(noteColor), marginRight: 10, marginLeft: 5 }} onClick={doneButtonClick}/>
         <MoreVert style={iconSize(noteColor)} />
         <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom">
-            {ToolsComponent}
+            <ColorSelector {...{ note, setNote }} />s
         </Popper>
     </div>);
 };

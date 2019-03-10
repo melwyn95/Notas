@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import { openDb } from 'idb';
+import Plain from 'slate-plain-serializer';
 import { WHITE } from '../contants/noteColors';
 
 const DEFAULT_NOTE_TEXT = 'This is supposed to be a long long long note asdasdasdasdadsasddasdasddasd';
@@ -23,11 +24,13 @@ export const initializeIDB = () => {
 				notesObjectStore.createIndex('notesLastModifiedTimestamp', 'lastModifiedTimestamp');
 				notesObjectStore.createIndex('notesFolderId', 'folderId');
 
+				// TODO: sort out previewContent issue in Grid View
 				notesObjectStore.add(
 					{
 						color: WHITE.label,
 						content: DEFAULT_NOTE_TEXT,
 						previewContent: DEFAULT_NOTE_TEXT.substr(0, 80),
+						structuredContent: Plain.deserialize(DEFAULT_NOTE_TEXT).toJSON(),
 						folderId: 1,
 						creationTimestamp: timestamp,
 						lastModifiedTimestamp: timestamp,

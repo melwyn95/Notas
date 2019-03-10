@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Circle = ({ onClick, color }) =>
-    <div className="container--circle-icon" style={{ marginRight: 5 }} onClick={onClick}>
+    <div className="container--circle-icon" style={{ marginRight: 10 }} onClick={onClick}>
         <div style={{
             borderRadius: '50%',
             backgroundColor: color,

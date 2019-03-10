@@ -1,38 +1,42 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react';
+import React, { useEffect, useState, useContext, useCallback, useRef } from 'react';
 import { withRouter } from 'react-router-dom';
 
-import doNoteAction, { GET_NOTE_BY_ID } from '../../actions/doNoteAction';
+import doNoteAction, { GET_NOTE_BY_ID, SAVE_NOTE } from '../../actions/doNoteAction';
 import idbContext from '../../contexts/idbContext';
 
 import NoteHeaderToolbar from './NoteHeaderToolbar';
-import ColorSelector from './NoteHeaderToolbar/ColorSelector';
-import RichTextOption from './NoteHeaderToolbar/RichTextOptions';
+import NoteBody from './NoteBody';
 import Spinner from '../../components/Spinner';
 
 import { getColorFromLabel } from '../../contants/noteColors';
+
 
 import './styles.css';
 
 const NotePage = ({ match, history }) => {
     const { idb } = useContext(idbContext);
-    const [note, setNote] = useState(null);
-    const [tools, setTools] = useState(null);
 
+    const [note, setNote] = useState(null);
+    const [value, setValue] = useState(null);
     const [toolTipAnchorEl, setToolTipAnchorEl] = useState(null);
+
     const iconClick = useCallback((e, tools) => {
         e.stopPropagation();
-        setTools(tools);
         setToolTipAnchorEl(e.currentTarget);
     }, []);
     const closeToolTip = useCallback(() => setToolTipAnchorEl(null), []);
-
     const backButtonClick = useCallback(() => history.replace('/'), []);
-
+    const doneButtonClick = useCallback(() => {
+        doNoteAction(SAVE_NOTE.operation, { idb, note, value })
+        history.replace('/');
+    }, [note, value]);
 
     useEffect(() => {
         const noteId = match.params.id;
-        doNoteAction(GET_NOTE_BY_ID.operation, { idb, setNote, noteId })
+        doNoteAction(GET_NOTE_BY_ID.operation, { idb, setNote, setValue, noteId })
     }, []);
+
+    const editorRef = useRef();
 
     if (!note) {
         return <Spinner />;
@@ -47,23 +51,21 @@ const NotePage = ({ match, history }) => {
                 anchorEl: toolTipAnchorEl,
                 iconClick,
                 backButtonClick,
+                doneButtonClick,
                 noteColor: note.color,
-                ToolsComponent: getToolsComponent(tools, note, setNote)
+                note,
+                setNote,
+                editorRef,
             }} />
-            {note && note.content}
-
+            <div className="container--note-body">
+                <NoteBody  {...{
+                    value,
+                    setValue,
+                    editorRef,
+                    note,
+                }} />
+            </div>
         </div>);
 };
-
-const getToolsComponent = (tools, note, setNote) => {
-    switch (tools) {
-        case 'change_color':
-            return <ColorSelector note={note} setNote={setNote} />;
-        case 'rich_text_options':
-            return <RichTextOption />
-        default:
-            return null;
-    }
-}
 
 export default withRouter(NotePage);
