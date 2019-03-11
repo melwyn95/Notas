@@ -191,9 +191,9 @@ const doNoteAction = (action, params) => {
 			});
 		}
 		case SAVE_NOTE.operation: {
-			const { idb, note: { id, folderId }, value } = params;
+			const { idb, note: { id, folderId }, value, setNote } = params;
 			const serializedContent = Plain.serialize(value);
-			idb.then(async db => {
+			return idb.then(async db => {
 				let tx = db.transaction(['notes', 'folders'], 'readwrite');
 				let notesStore = tx.objectStore('notes');
 				let foldersStore = tx.objectStore('folders');
@@ -208,8 +208,14 @@ const doNoteAction = (action, params) => {
 				notesStore.put(note);
 				foldersStore.put(folder);
 				return tx.complete;
-			})
-			return;
+			}).then(() => {
+				idb.then(async db => {
+					let tx = db.transaction(['notes'], 'readonly');
+					let notesStore = tx.objectStore('notes');
+					let dbNote = await notesStore.get(id);
+					setNote(dbNote);
+				});
+			});
 		}
 		case GET_NOTES_BY_IDS.operation: {
 			const { idb, noteIds, setNotes } = params;

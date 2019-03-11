@@ -16,7 +16,7 @@ import doNoteAction, { GET_NOTES_BY_IDS } from '../../../actions/doNoteAction';
 const searchNotes = debounce(async (folderId, searchText, idb, setNotes) => {
     const noteIds = await searchWorker.search(folderId, searchText);
     doNoteAction(GET_NOTES_BY_IDS.operation, {idb, noteIds, setNotes})
-}, 1000);
+}, 400);
 
 const SearchBar = ({ classes, openedFolder, setNotes }) => {
     const {idb} = useContext(idbContext);

@@ -15,7 +15,7 @@ import IDBContext from '../../../contexts/idbContext';
 
 import { OPTION_MOVE, OPTION_DELETE, OPTION_RESTORE } from '../../../application/noteOperations';
 import doNoteAction, { DELETE_NOTES, MOVE_NOTES } from '../../../actions/doNoteAction';
-import doFolderAction, { GET_ALL_FOLDERS, OPEN_CREATE_FOLDER_MODAL } from '../../../actions/doFolderAction';
+import doFolderAction, { GET_ALL_FOLDERS } from '../../../actions/doFolderAction';
 
 const BottomNotesOperations = ({ classes, options, show, openedFolder, selection, setOpenedFolder, setSelection, setCreateDialogOpen }) => {
 	const { idb } = useContext(IDBContext);

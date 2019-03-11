@@ -73,6 +73,7 @@ const NotePage = ({ match, history }) => {
                     setValue,
                     editorRef,
                     note,
+                    setNote,
                     wordCount,
                 }} />
             </div>

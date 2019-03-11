@@ -8,11 +8,11 @@ import doNoteAction, { SAVE_NOTE } from '../../../actions/doNoteAction';
 import RichTextOption from '../NoteHeaderToolbar/RichTextOptions';
 import idbContext from '../../../contexts/idbContext';
 
-const saveNote = debounce((idb, value, note, setValue, setNote) => {
-    doNoteAction(SAVE_NOTE.operation, { idb, value, note, setValue, setNote });
-}, 1000);
+const saveNote = debounce((idb, value, note, setNote) => {
+    doNoteAction(SAVE_NOTE.operation, { idb, value, note, setNote });
+}, 600);
 
-const NoteBody = ({ editorRef, value, setValue, note, wordCount }) => {
+const NoteBody = ({ editorRef, value, setValue, note, wordCount, setNote }) => {
     const { idb } = useContext(idbContext);
 
     const onKeyDown = (event, editor, next) => {
@@ -69,7 +69,7 @@ const NoteBody = ({ editorRef, value, setValue, note, wordCount }) => {
             ref={editor => editorRef.current = editor}
             value={value}
             onChange={({ value }) => {
-                saveNote(idb, value, note);
+                saveNote(idb, value, note, setNote);
                 setValue(value)
             }
             }

@@ -58,6 +58,7 @@ const HomePage = ({ match }) => {
 		<div className="container--home-page" onClick={clearDropDown}>
 			<Header
 				openedFolder={openedFolder}
+				setOpenedFolder={setOpenedFolder}
 				setSnackError={setSnackError}
 				showDropdown={showDropdown}
 				setShowDropdown={setShowDropdown}

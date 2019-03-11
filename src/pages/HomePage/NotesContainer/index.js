@@ -11,7 +11,7 @@ const NotesContainer = ({ selection, setSelection, fetching, notes, history }) =
             Boolean(notes.length) ?
                 notes.map(note =>
                     <Note
-                        key={note.creationTimeStamp}
+                        key={note.creationTimestamp}
                         note={note}
                         history={history}
                         selection={selection}

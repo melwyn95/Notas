@@ -86,6 +86,7 @@ const RichTextOptions = ({ value, editorRef, note }) => {
         {
             options.map(option =>
                 <IconButton
+                    key={option}
                     style={{ padding: 10 }}
                     onClick={e => marks.includes(option) ? onClickMark(e, option) : onClickBlock(e, option)}>
                     {getIconForOption(option, marks.includes(option), value)}

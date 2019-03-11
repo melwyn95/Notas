@@ -40,7 +40,6 @@ const HomePageHeader = ({ openedFolder, setOpenedFolder, setSnackError, showDrop
 			<FolderList
 				folders={folders}
 				setShowDropdown={setShowDropdown}
-				setOpenedFolder={setOpenedFolder}
 				setOpen={setOpen}
 				openedFolder={openedFolder}
 				show={showDropdown}
@@ -96,6 +95,7 @@ const Options = ({ anchorEl, setAnchorEl, openedFolder, setOpen, close }) =>
 			if (!openedFolder.systemFolder || option.operation === 'open_settings') {
 				return (
 					<MenuItem
+						key={openedFolder.timestamp}
 						style={{ fontSize: 14 }}
 						onClick={(e) => {
 							doFolderAction(option.operation, openedFolder.id, { setOpen, close });
