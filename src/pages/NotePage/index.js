@@ -9,6 +9,7 @@ import NoteBody from './NoteBody';
 import Spinner from '../../components/Spinner';
 
 import { getColorFromLabel } from '../../contants/noteColors';
+import wordCountWorker from '../../workers/wordCount';
 
 
 import './styles.css';
@@ -19,6 +20,7 @@ const NotePage = ({ match, history }) => {
     const [note, setNote] = useState(null);
     const [value, setValue] = useState(null);
     const [toolTipAnchorEl, setToolTipAnchorEl] = useState(null);
+    const [wordCount, setWordCount] = useState(-1);
 
     const iconClick = useCallback((e, tools) => {
         e.stopPropagation();
@@ -35,6 +37,14 @@ const NotePage = ({ match, history }) => {
         const noteId = match.params.id;
         doNoteAction(GET_NOTE_BY_ID.operation, { idb, setNote, setValue, noteId })
     }, []);
+
+    useEffect(() => {
+        if (note) {
+            wordCountWorker.wordCount(note.id).then((countWords) => {
+                setWordCount(countWords);
+            });
+        }
+    }, [note]);
 
     const editorRef = useRef();
 
@@ -63,6 +73,7 @@ const NotePage = ({ match, history }) => {
                     setValue,
                     editorRef,
                     note,
+                    wordCount,
                 }} />
             </div>
         </div>);

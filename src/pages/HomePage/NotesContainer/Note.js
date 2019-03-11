@@ -14,7 +14,7 @@ const cardRootStyle = ({ color }) => ({ backgroundColor: getColorFromLabel(color
 const Note = props => {
     const { note, note: { previewContent }, classes, selection, setSelection, history } = props;
 
-    const isCheceked = useMemo(() => selection.includes(note.id), [selection]);
+    const isCheceked = useMemo(() => selection.includes(note.id), [selection, note.id]);
 
     const checkCallback = useCallback((e) => {
         e.stopPropagation();
@@ -23,10 +23,10 @@ const Note = props => {
         } else {
             setSelection([...selection, note.id]);
         }
-    }, [selection]);
+    }, [selection, note.id]);
     const noteClicked = useCallback(() => {
         history.push(`/note/${note.id}`);
-    }, [])
+    }, [note.id])
 
     return <Card className={classes.root} style={cardRootStyle(note)} onClick={noteClicked}>
         <p className={classes.content}>

@@ -1,15 +1,13 @@
 import React, { Fragment } from 'react';
+import { withRouter } from 'react-router-dom';
 
 import Spinner from '../../../components/Spinner';
 
 import doFolderAction, { OPEN_CREATE_FOLDER_MODAL } from '../../../actions/doFolderAction';
 
-const selectFolder = (folder, setOpenedFolder, setShowDropdown) => {
-	setShowDropdown(false);
-	setOpenedFolder(folder);
-};
+const selectFolder = (folder, history) => history.push(`/folder/${folder.id}`);
 
-const FolderList = ({ folders, setShowDropdown, setOpenedFolder, openedFolder, setOpen, show }) => {
+const FolderList = ({ folders, setShowDropdown, openedFolder, setOpen, show, history }) => {
 	if (!folders && show) {
 		return <Spinner />;
 	}
@@ -18,7 +16,7 @@ const FolderList = ({ folders, setShowDropdown, setOpenedFolder, openedFolder, s
 		<div className="container--list-item" style={(show ? {} : { maxHeight: 0, opacity: 0 })}>
 			{show && folders.map((folder) => (
 				<Fragment key={`list-item-${folder.id}`}>
-					<div className="list-item" onClick={() => selectFolder(folder, setOpenedFolder, setShowDropdown)}>
+					<div className="list-item" onClick={() => selectFolder(folder, history)}>
 						<div
 							className={`list-item-label ${openedFolder.id === folder.id
 								? 'list-item-label__bold'
@@ -49,4 +47,4 @@ const FolderList = ({ folders, setShowDropdown, setOpenedFolder, openedFolder, s
 	);
 };
 
-export default FolderList;
+export default withRouter(FolderList);

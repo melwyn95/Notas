@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import Note from './Note';
@@ -23,4 +23,10 @@ const NotesContainer = ({ selection, setSelection, fetching, notes, history }) =
     </div>);
 }
 
-export default withRouter(NotesContainer);
+const areNotesEqual = (prevProps, nextProps) => {
+    const { notes: prevNotes, selection: prevSelection, fetching: prevFetching } = prevProps;
+    const { notes: nextNotes, selection: nextSelection, fetching: nextFetching } = nextProps;
+    return prevNotes === nextNotes && prevSelection === nextSelection && prevFetching === nextFetching;
+}
+
+export default withRouter(memo(NotesContainer, areNotesEqual));

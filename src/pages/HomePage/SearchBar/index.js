@@ -1,4 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
+import { debounce } from 'lodash';
+
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
@@ -6,11 +8,23 @@ import HighlightOff from '@material-ui/icons/Clear';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { withStyles } from '@material-ui/core/styles'
 
-const SearchBar = ({ classes }) => {
+import idbContext from '../../../contexts/idbContext';
+
+import searchWorker from '../../../workers/search';
+import doNoteAction, { GET_NOTES_BY_IDS } from '../../../actions/doNoteAction';
+
+const searchNotes = debounce(async (folderId, searchText, idb, setNotes) => {
+    const noteIds = await searchWorker.search(folderId, searchText);
+    doNoteAction(GET_NOTES_BY_IDS.operation, {idb, noteIds, setNotes})
+}, 1000);
+
+const SearchBar = ({ classes, openedFolder, setNotes }) => {
+    const {idb} = useContext(idbContext);
     const [value, setValue] = useState('');
     const clearValue = useCallback(() => {
+        searchNotes(openedFolder.id, '', idb, setNotes);
         setValue('');
-    }, []);
+    }, [openedFolder]);
 
     return (
         <div className="container--search-bar">
@@ -19,7 +33,10 @@ const SearchBar = ({ classes }) => {
                 style={{ fontSize: 17 }}
                 value={value}
                 placeholder="Search notes"
-                onChange={(e) => setValue(e.target.value)}
+                onChange={(e) => {
+                    searchNotes(openedFolder.id, e.target.value, idb, setNotes);
+                    setValue(e.target.value)
+                }}
                 variant="outlined"
                 InputProps={{
                     startAdornment: (<InputAdornment position="start">

@@ -13,6 +13,7 @@ const MOVE_NOTES = { operation: 'move_notes' };
 const GET_NOTE_BY_ID = { operation: 'get_note_by_id' };
 const CHANGE_NOTE_COLOR = { operation: 'change_note_color' };
 const SAVE_NOTE = { operation: 'save_note' };
+const GET_NOTES_BY_IDS = { operation: 'get_notes_by_ids' };
 
 const updateOpenedFolder = async (db, folderId, setOpenedFolder) => {
 	let tx = db.transaction('folders', 'readonly');
@@ -210,6 +211,14 @@ const doNoteAction = (action, params) => {
 			})
 			return;
 		}
+		case GET_NOTES_BY_IDS.operation: {
+			const { idb, noteIds, setNotes } = params;
+			return idb.then(db => {
+				const tx = db.transaction(['notes'], 'readonly');
+				const store = tx.objectStore('notes');
+				Promise.all(noteIds.map(noteId => store.get(noteId))).then((notes => setNotes(notes)));
+			});
+		}
 		default:
 			console.log('INVALID_OPERATION');
 	}
@@ -224,6 +233,7 @@ export {
 	GET_NOTE_BY_ID,
 	CHANGE_NOTE_COLOR,
 	SAVE_NOTE,
+	GET_NOTES_BY_IDS,
 };
 
 export default doNoteAction;

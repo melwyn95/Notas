@@ -16,7 +16,7 @@ const AddNotes = ({ history, classes, openedFolder, setOpenedFolder, show }) => 
     }, []);
     const createNote = useCallback(() => {
         doNoteAction(CREATE_NOTE.operation, { idb, openedFolder, setOpenedFolder, changeRoute });
-    }, []);
+    }, [openedFolder]);
 
     return (show && <div className="container--add-notes">
         <Fab className={classes.fabRoot} onClick={createNote}>

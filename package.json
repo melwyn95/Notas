@@ -14,7 +14,8 @@
     "react-router-dom": "^4.4.0-beta.6",
     "react-scripts": "2.1.5",
     "slate": "^0.44.11",
-    "slate-react": "^0.21.17"
+    "slate-react": "^0.21.17",
+    "workerize": "^0.1.7"
   },
   "scripts": {
     "start": "react-scripts start",

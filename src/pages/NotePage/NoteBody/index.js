@@ -12,7 +12,7 @@ const saveNote = debounce((idb, value, note, setValue, setNote) => {
     doNoteAction(SAVE_NOTE.operation, { idb, value, note, setValue, setNote });
 }, 1000);
 
-const NoteBody = ({ editorRef, value, setValue, note }) => {
+const NoteBody = ({ editorRef, value, setValue, note, wordCount }) => {
     const { idb } = useContext(idbContext);
 
     const onKeyDown = (event, editor, next) => {
@@ -55,6 +55,7 @@ const NoteBody = ({ editorRef, value, setValue, note }) => {
 
     return <>
         <RichTextOption {...{ value, editorRef, note }} />
+        {wordCount}
         <Editor
             spellCheck
             autoFocus

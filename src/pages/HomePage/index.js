@@ -18,7 +18,7 @@ import NotesContainer from './NotesContainer';
 import AddNotes from './AddNotes';
 import BottomNotesOperations from './BottomNotesOperations';
 
-const HomePage = () => {
+const HomePage = ({ match }) => {
 	const { idb } = useContext(IDBContext);
 
 	const [openedFolder, setOpenedFolder] = useState(null);
@@ -41,12 +41,13 @@ const HomePage = () => {
 	const isTrashFolder = openedFolder && openedFolder.id === 2;
 
 	useEffect(() => {
-		doFolderAction(GET_ALL_NOTES_FOLDER.operation, 1, { idb, setOpenedFolder });
-	}, []);
+		const folderId = Number.parseInt(match.params.id);
+		doFolderAction(GET_ALL_NOTES_FOLDER.operation, folderId, { idb, setOpenedFolder });
+	}, [match]);
 
 	useEffect(() => {
 		doNoteAction(GET_ALL_NOTES.operation, { idb, openedFolder, setFetching, setNotes });
-	}, [openedFolder && openedFolder.count]);
+	}, [openedFolder]);
 
 
 	if (!openedFolder) {
@@ -57,7 +58,6 @@ const HomePage = () => {
 		<div className="container--home-page" onClick={clearDropDown}>
 			<Header
 				openedFolder={openedFolder}
-				setOpenedFolder={setOpenedFolder}
 				setSnackError={setSnackError}
 				showDropdown={showDropdown}
 				setShowDropdown={setShowDropdown}
@@ -65,7 +65,7 @@ const HomePage = () => {
 				selection={selection}
 				clearDropDown={clearDropDown}
 				setSelection={setSelection} />
-			<SearchBar />
+			<SearchBar openedFolder={openedFolder} setNotes={setNotes} />
 			<NotesContainer
 				fetching={fetching}
 				notes={notes}

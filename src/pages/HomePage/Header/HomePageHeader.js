@@ -78,7 +78,7 @@ const FolderNameButton = ({ setShowDropdown, showDropdown, openedFolder: { name 
 	</div>);
 
 const MoreOptions = ({ showDropdown, setShowDropdown, setAnchorEl }) =>
-	(<div className="container--more-options" style={!showDropdown ? { maxHeight: 0 } : {}}>
+	(!showDropdown && <div className="container--more-options" style={!showDropdown ? { maxHeight: 0 } : {}}>
 		<IconButton
 			onClick={(e) => {
 				e.stopPropagation();
