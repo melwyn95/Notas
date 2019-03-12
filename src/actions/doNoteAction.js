@@ -79,9 +79,11 @@ const doNoteAction = (action, params) => {
 						return index.openCursor(range);
 					})
 					.then(function cursorLoop(cursor) {
-						if (!cursor || (cursor.value.folderId === 2 && openedFolder.id !== 2)) {
-							// Also exclude trash notes
+						if (!cursor) {
 							return;
+						}
+						if (cursor.value.folderId === 2 && openedFolder.id !== 2) {
+							return cursor.continue().then(cursorLoop);
 						}
 						const { value } = cursor;
 						folderNotes.push(value);
@@ -98,6 +100,7 @@ const doNoteAction = (action, params) => {
 			const { idb, selection, openedFolder, setOpenedFolder } = params;
 			idb
 				.then(async (db) => {
+					const timestamp = new Date().getTime();
 					let tx = db.transaction(['notes', 'folders'], 'readwrite');
 					let notesObjectStore = tx.objectStore('notes');
 					let foldersObjectStore = tx.objectStore('folders');
@@ -105,24 +108,35 @@ const doNoteAction = (action, params) => {
 					let trashFolder = await foldersObjectStore.get(2);
 
 					if (openedFolder.id === 2) {
-						// Delete Permanently
 						selection.map((noteId) => notesObjectStore.delete(noteId));
 						trashFolder.count -= selection.length;
 					} else {
-						// Move to trash
-						trashFolder.count += selection.length;
-
-						let currentlyOpenedFolder = await foldersObjectStore.get(openedFolder.id);
-						currentlyOpenedFolder.count -= selection.length;
-						foldersObjectStore.put(currentlyOpenedFolder);
+						let folderIdNotesMap = {};
+						folderIdNotesMap[1] = selection.length;
 
 						selection.map(async (noteId) => {
-							let note = await notesObjectStore.get(noteId);
+							let note = await notesObjectStore.get(+noteId);
+							if (folderIdNotesMap[note.folderId]) {
+								folderIdNotesMap[note.folderId] += 1;
+							} else {
+								folderIdNotesMap[note.folderId] = 1;
+							}
 							note.folderId = 2;
 							notesObjectStore.put(note);
 						});
+
+
+						Object.keys(folderIdNotesMap).map(async folderId => {
+							const folder = await foldersObjectStore.get(+folderId);
+							folder.count -= folderIdNotesMap[folderId];
+							folder.timestamp = timestamp;
+							foldersObjectStore.put(folder);
+						});
+
+						trashFolder.count += selection.length;
+						trashFolder.timestamp = timestamp;
+						foldersObjectStore.put(trashFolder);
 					}
-					foldersObjectStore.put(trashFolder);
 
 					return tx.complete;
 				})
@@ -135,23 +149,40 @@ const doNoteAction = (action, params) => {
 			const { idb, selection, openedFolder, setOpenedFolder, moveToFolderId } = params;
 			idb
 				.then(async (db) => {
+					const timestamp = new Date().getTime();
 					let tx = db.transaction(['folders', 'notes'], 'readwrite');
 					let notesStore = tx.objectStore('notes');
 					let foldersStore = tx.objectStore('folders');
+					let folderIdNotesMap = {};
 
-					let srcFolder = await foldersStore.get(openedFolder.id);
-					let dstFolder = await foldersStore.get(moveToFolderId);
+					let dstFolder = await foldersStore.get(+moveToFolderId);
 
-					srcFolder.count -= selection.length;
-					dstFolder.count += selection.length;
-
-					selection.map(async (noteId) => {
-						let note = await notesStore.get(noteId);
+					await Promise.all(selection.map(async (noteId) => {
+						let note = await notesStore.get(+noteId);
+						if (folderIdNotesMap[note.folderId]) {
+							folderIdNotesMap[note.folderId] += 1;
+						} else {
+							folderIdNotesMap[note.folderId] = 1;
+						}
 						note.folderId = dstFolder.id;
-						notesStore.put(note);
-					});
+						return notesStore.put(note);
+					}));
 
-					foldersStore.put(srcFolder);
+					if (+moveToFolderId === 2) {
+						folderIdNotesMap[1] = selection.length;
+					} else {
+						delete folderIdNotesMap[1];
+					}
+
+					await Promise.all(Object.keys(folderIdNotesMap).map(async folderId => {
+						const folder = await foldersStore.get(+folderId);
+						folder.count -= folderIdNotesMap[folderId];
+						folder.timestamp = timestamp;
+						return foldersStore.put(folder);
+					}));
+
+					dstFolder.count += selection.length;
+					dstFolder.timestamp = timestamp;
 					foldersStore.put(dstFolder);
 
 					return tx.complete;

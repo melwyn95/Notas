@@ -6,6 +6,8 @@ import SelectAll from '@material-ui/icons/DoneAll';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 
+const iconButtonStyle = { padding: '0 12px' };
+
 const SelectionHeader = ({ selection, setSelection, clearDropDown, notes, classes }) => {
     const clearSelectionCallback = useCallback(() => {
         setSelection([]);
@@ -24,7 +26,7 @@ const SelectionHeader = ({ selection, setSelection, clearDropDown, notes, classe
     const allNotesSelected = useMemo(() => notes.length === selection.length, [selection]);
 
     return (<div className="container--selectionn-header">
-        <IconButton onClick={clearSelectionCallback}>
+        <IconButton style={iconButtonStyle} onClick={clearSelectionCallback}>
             <Clear />
         </IconButton>
         <Typography component="h2" className={classes.heading}>
@@ -34,7 +36,7 @@ const SelectionHeader = ({ selection, setSelection, clearDropDown, notes, classe
                     `${selection.length} items selected`
             }
         </Typography>
-        <IconButton onClick={selectAllNotes}>
+        <IconButton style={iconButtonStyle} onClick={selectAllNotes}>
             <SelectAll style={(allNotesSelected ? { color: '#1e88e5' } : {})} />
         </IconButton>
     </div>);
@@ -42,7 +44,7 @@ const SelectionHeader = ({ selection, setSelection, clearDropDown, notes, classe
 
 const styles = theme => ({
     heading: {
-        lineHeight: '50px',
+        lineHeight: '42px',
         fontSize: '16px',
         fontWeight: 700,
     }
