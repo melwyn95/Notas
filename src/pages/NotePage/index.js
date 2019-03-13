@@ -27,7 +27,7 @@ const NotePage = ({ match, history }) => {
         setToolTipAnchorEl(e.currentTarget);
     }, []);
     const closeToolTip = useCallback(() => setToolTipAnchorEl(null), []);
-    const backButtonClick = useCallback(() => history.replace(`/folder/${match.params.id}`), []);
+    const backButtonClick = useCallback(() => history.replace(`/folder/${note.folderId}`), [note && note.folderId]);
     const doneButtonClick = useCallback(() => {
         doNoteAction(SAVE_NOTE.operation, { idb, note, value })
         history.replace('/');

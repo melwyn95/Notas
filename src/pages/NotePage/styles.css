@@ -22,6 +22,7 @@
 
 .container--note-body{
     height: calc(100% - 20px);
+    overflow: hidden;
 }
 
 blockquote {
