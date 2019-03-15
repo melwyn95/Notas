@@ -5,6 +5,8 @@ import { Editor } from 'slate-react'
 
 import doNoteAction, { SAVE_NOTE } from '../../../actions/doNoteAction';
 
+import {getReadableTimeStamp} from '../../../application/utils';
+
 import RichTextOption from '../NoteHeaderToolbar/RichTextOptions';
 import idbContext from '../../../contexts/idbContext';
 
@@ -55,7 +57,7 @@ const NoteBody = ({ editorRef, value, setValue, note, wordCount, setNote }) => {
 
     return <>
         <RichTextOption {...{ value, editorRef, note }} />
-        {wordCount}
+        {getReadableTimeStamp(note.lastModifiedTimestamp)}{wordCount}
         <Editor
             spellCheck
             autoFocus
