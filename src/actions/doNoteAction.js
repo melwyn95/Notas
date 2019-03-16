@@ -112,9 +112,8 @@ const doNoteAction = (action, params) => {
 						trashFolder.count -= selection.length;
 					} else {
 						let folderIdNotesMap = {};
-						folderIdNotesMap[1] = selection.length;
 
-						selection.map(async (noteId) => {
+						Promise.all(selection.map(async (noteId) => {
 							let note = await notesObjectStore.get(+noteId);
 							if (folderIdNotesMap[note.folderId]) {
 								folderIdNotesMap[note.folderId] += 1;
@@ -123,19 +122,19 @@ const doNoteAction = (action, params) => {
 							}
 							note.folderId = 2;
 							notesObjectStore.put(note);
-						});
+						})).then(() => {
+							folderIdNotesMap[1] = selection.length;
+							Object.keys(folderIdNotesMap).map(async folderId => {
+								const folder = await foldersObjectStore.get(+folderId);
+								folder.count -= folderIdNotesMap[folderId];
+								folder.timestamp = timestamp;
+								foldersObjectStore.put(folder);
+							});
 
-
-						Object.keys(folderIdNotesMap).map(async folderId => {
-							const folder = await foldersObjectStore.get(+folderId);
-							folder.count -= folderIdNotesMap[folderId];
-							folder.timestamp = timestamp;
-							foldersObjectStore.put(folder);
-						});
-
-						trashFolder.count += selection.length;
-						trashFolder.timestamp = timestamp;
-						foldersObjectStore.put(trashFolder);
+							trashFolder.count += selection.length;
+							trashFolder.timestamp = timestamp;
+							foldersObjectStore.put(trashFolder);
+						})
 					}
 
 					return tx.complete;
