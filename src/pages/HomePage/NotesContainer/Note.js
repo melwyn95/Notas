@@ -31,8 +31,8 @@ const Note = props => {
 
     return <Card className={classes.root} style={cardRootStyle(note)} onClick={noteClicked}>
         <p className={classes.content}>
-            <strong style={{ color: '#000' }}>{previewContent.substr(0, 21)}</strong>
-            {previewContent.substr(21)}
+            <strong style={{ color: '#000' }}>{previewContent.substr(0, 20)}</strong>
+            {previewContent.substr(20)}
         </p>
         <div className="time-stamp-wrappper">
             <TextView className="text-view-content">{getReadableTimeStamp(note.lastModifiedTimestamp)}</TextView>

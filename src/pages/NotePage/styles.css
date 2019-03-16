@@ -31,12 +31,6 @@ blockquote {
     font-style: italic;
 }
 
-.text-view-content {
-    font-size: 14px;
-    color: #5f6368;
-    margin: 5px;
-}
-
 .text-view-content--separator {
     font-size: 12px;
     line-height: 14px;
