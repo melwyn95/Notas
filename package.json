@@ -1,6 +1,7 @@
 {
   "name": "notas",
   "version": "0.1.0",
+  "homepage": "https://melwyn95.github.io/Notas/",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.9.2",
