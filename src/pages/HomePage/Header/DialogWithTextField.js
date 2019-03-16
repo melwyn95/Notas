@@ -26,7 +26,7 @@ const DialogWithTextField = (props) => {
 				InputProps={{
 					classes: {
 						root: classes.rootTextField,
-						focussed: classes.rootTextField
+						focused: classes.rootTextField
 					}
 				}}
 				onChange={(e) => setValue(e.target.value)}

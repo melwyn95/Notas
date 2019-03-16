@@ -34,7 +34,7 @@ const HomePageHeader = ({ openedFolder, setOpenedFolder, setSnackError, showDrop
 		<Fragment>
 			<div className="container--header">
 				<FolderNameButton {...{ setShowDropdown, showDropdown, openedFolder }} />
-				<MoreOptions {...{ showDropdown, setShowDropdown, setAnchorEl }} />
+				<MoreOptions {...{ showDropdown, setShowDropdown, setAnchorEl, openedFolder }} />
 				<Options {...{ anchorEl, setAnchorEl, openedFolder, setOpen, close }} />
 			</div>
 			<FolderList
@@ -76,8 +76,10 @@ const FolderNameButton = ({ setShowDropdown, showDropdown, openedFolder: { name 
 		</Button>
 	</div>);
 
-const MoreOptions = ({ showDropdown, setShowDropdown, setAnchorEl }) =>
-	(!showDropdown && <div className="container--more-options" style={!showDropdown ? { maxHeight: 0 } : {}}>
+const shouldShowMoreOptions = (showDropdown, openedFolder) => !showDropdown && openedFolder && !openedFolder.systemFolder;
+
+const MoreOptions = ({ showDropdown, setShowDropdown, setAnchorEl, openedFolder }) =>
+	(shouldShowMoreOptions(showDropdown, openedFolder) && <div className="container--more-options" style={!showDropdown ? { maxHeight: 0 } : {}}>
 		<IconButton
 			onClick={(e) => {
 				e.stopPropagation();
@@ -89,24 +91,19 @@ const MoreOptions = ({ showDropdown, setShowDropdown, setAnchorEl }) =>
 		</IconButton>
 	</div>);
 
-const Options = ({ anchorEl, setAnchorEl, openedFolder, setOpen, close }) =>
+const Options = ({ anchorEl, setAnchorEl, openedFolder, setOpen, close, }) =>
 	(<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={(e) => setAnchorEl(null)}>
-		{FolderMenuOptions.map((option) => {
-			if (!openedFolder.systemFolder || option.operation === 'open_settings') {
-				return (
-					<MenuItem
-						key={openedFolder.timestamp}
-						style={{ fontSize: 14 }}
-						onClick={(e) => {
-							doFolderAction(option.operation, openedFolder.id, { setOpen, close });
-						}}
-					>
-						{option.label}
-					</MenuItem>
-				);
-			}
-			return undefined;
-		})}
+		{FolderMenuOptions.map(option =>
+			<MenuItem
+				key={option.operation}
+				style={{ fontSize: 14 }}
+				onClick={(e) => {
+					doFolderAction(option.operation, openedFolder.id, { setOpen, close });
+				}}
+			>
+				{option.label}
+			</MenuItem>
+		)}
 	</Menu>);
 
 export default HomePageHeader;

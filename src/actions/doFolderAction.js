@@ -8,7 +8,7 @@ const OPEN_SETTINGS = { label: 'Open Settings', operation: 'open_settings' };
 const GET_ALL_NOTES_FOLDER = { operation: 'get_all_notes_folder' }
 const GET_ALL_FOLDERS = { operation: 'get_all_folders' };
 
-const FolderMenuOptions = [OPEN_RENAME_FOLDER_MODAL, OPEN_DELETE_FOLDER_MODAL, OPEN_SETTINGS];
+const FolderMenuOptions = [OPEN_RENAME_FOLDER_MODAL, OPEN_DELETE_FOLDER_MODAL];
 
 const doFolderAction = async (actionName, folder_id, params) => {
 	switch (actionName) {
@@ -81,9 +81,11 @@ const doFolderAction = async (actionName, folder_id, params) => {
 				.then((db) => {
 					let tx = db.transaction('folders', 'readwrite');
 					let store = tx.objectStore('folders');
+					const timestamp = new Date().getTime();
 					store.add({
 						name: value,
-						count: 0
+						count: 0,
+						timestamp
 					});
 					return tx.complete;
 				})

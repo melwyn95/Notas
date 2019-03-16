@@ -20,7 +20,7 @@ const getReadableTimeStamp = timestamp => {
     const date = new Date(timestamp);
     const dateString = date.toDateString();
     const timeString = date.toTimeString();
-    const [hours, minutes, ...rest] = timeString.split(':');
+    const [hours, minutes, ] = timeString.split(':');
     const [dayOfWeek, month, day, year] = dateString.split(' ');
     const time = getTwelveHourFormat(hours, minutes);
 

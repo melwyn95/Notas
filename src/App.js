@@ -17,7 +17,7 @@ class App extends Component {
 	render() {
 		return (
 			<IDBContext.Provider value={{ idb: this.idb }}>
-				<Router>
+				<Router basename="/Notas">
 					<Switch>
 						<Route path="/" exact component={props => <Redirect to={{
 							pathname: "/folder/1",
