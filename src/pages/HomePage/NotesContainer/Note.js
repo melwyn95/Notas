@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
 
 import Card from '@material-ui/core/Card';
-import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckCircleOutline from '@material-ui/icons/RadioButtonUnchecked'
 import CheckCirlce from '@material-ui/icons/CheckCircleRounded';
 import { withStyles } from '@material-ui/core/styles';
 
+import { getReadableTimeStamp } from '../../../application/utils';
+import TextView from '../../../components/TextView';
 import { getColorFromLabel } from '../../../contants/noteColors';
 
 const cardRootStyle = ({ color }) => ({ backgroundColor: getColorFromLabel(color, 'value'), position: 'relative' });
@@ -33,7 +34,9 @@ const Note = props => {
             <strong style={{ color: '#000' }}>{previewContent.substr(0, 21)}</strong>
             {previewContent.substr(21)}
         </p>
-        {/* TODO: Time Stamp */}
+        <div className="time-stamp-wrappper">
+            <TextView className="text-view-content">{getReadableTimeStamp(note.lastModifiedTimestamp)}</TextView>
+        </div>
         <Checkbox style={{
             position: 'absolute',
             bottom: 0,

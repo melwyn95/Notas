@@ -11,7 +11,7 @@ const YEAR = 52 * WEEK;
 const getTwelveHourFormat = (hours, minutes) => {
     const period = hours > 12 ? 'PM' : 'AM';
     const hour = hours % 12 || 12;
-    return `${hour} : ${minutes} ${period}`;
+    return `${hour}:${minutes} ${period}`;
 }
 
 const getReadableTimeStamp = timestamp => {
@@ -22,22 +22,23 @@ const getReadableTimeStamp = timestamp => {
     const timeString = date.toTimeString();
     const [hours, minutes, ...rest] = timeString.split(':');
     const [dayOfWeek, month, day, year] = dateString.split(' ');
+    const time = getTwelveHourFormat(hours, minutes);
+
     if (diffTimestamp <= DAY) {
         // if same day -> time
         return getTwelveHourFormat(hours, minutes);
     } else if (diffTimestamp <= WEEK) {
         // if same week -> day time
-        const time = getTwelveHourFormat(hours, minutes);
         return `${dayOfWeek} ${time}`;
     } else if (diffTimestamp <= MONTH) {
         // if same month -> dd day
-        return `${dayOfWeek} ${day}`
+        return `${dayOfWeek} ${day} ${time}`
     } else if (diffTimestamp <= YEAR) {
         // if same year -> dd month 
-        return `${day}/${month}`
+        return `${dayOfWeek} ${day} ${month}`
     } else {
         // else -> dd month year
-        return `${day}/${month}/${year}`
+        return `${day} ${month} ${year}`
     }
 }
 

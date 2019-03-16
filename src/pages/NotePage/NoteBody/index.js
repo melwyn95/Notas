@@ -3,9 +3,10 @@ import { debounce } from 'lodash';
 
 import { Editor } from 'slate-react'
 
+import TextView from '../../../components/TextView';
 import doNoteAction, { SAVE_NOTE } from '../../../actions/doNoteAction';
 
-import {getReadableTimeStamp} from '../../../application/utils';
+import { getReadableTimeStamp } from '../../../application/utils';
 
 import RichTextOption from '../NoteHeaderToolbar/RichTextOptions';
 import idbContext from '../../../contexts/idbContext';
@@ -57,13 +58,17 @@ const NoteBody = ({ editorRef, value, setValue, note, wordCount, setNote }) => {
 
     return <>
         <RichTextOption {...{ value, editorRef, note }} />
-        {getReadableTimeStamp(note.lastModifiedTimestamp)}{wordCount}
+        <div className="container--info">
+            <TextView className="text-view-content">{getReadableTimeStamp(note.lastModifiedTimestamp)}</TextView>
+            <TextView className="text-view-content--separator">|</TextView>
+            <TextView className="text-view-content">{`${wordCount} words`}</TextView>
+        </div>
         <Editor
             spellCheck
             autoFocus
             style={{
                 height: 'calc(100% - 50px)',
-                padding: '10px',
+                padding: '5px',
                 boxSizing: 'border-box',
                 overflow: 'auto',
             }}

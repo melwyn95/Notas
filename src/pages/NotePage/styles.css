@@ -4,9 +4,6 @@
     box-sizing: border-box
 }
 
-
-
-
 .container--header-toolbar {
     display: flex;   
 }
@@ -21,8 +18,9 @@
 }
 
 .container--note-body{
-    height: calc(100% - 20px);
+    height: calc(100% - 25px);
     overflow: hidden;
+    padding: 5px;
 }
 
 blockquote {
@@ -31,4 +29,21 @@ blockquote {
     margin-right: 0;
     padding-left: 10px;
     font-style: italic;
+}
+
+.text-view-content {
+    font-size: 14px;
+    color: #5f6368;
+    margin: 5px;
+}
+
+.text-view-content--separator {
+    font-size: 12px;
+    line-height: 14px;
+    vertical-align: middle;
+    color: #5f6368;
+}
+
+.container--info {
+    margin: 5px 0 0 0;
 }

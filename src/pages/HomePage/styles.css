@@ -172,3 +172,9 @@
     font-weight: 500;
     margin: 0 10px;
 }
+
+.time-stamp-wrappper {
+    position: absolute;
+    bottom: 10px;
+    left: 5px;
+}
