@@ -4,8 +4,8 @@ self.__precacheManifest = [
     "url": "/Notas/static/js/runtime~main.ed954949.js"
   },
   {
-    "revision": "6a156350f4d165345fda",
-    "url": "/Notas/static/js/main.6a156350.chunk.js"
+    "revision": "fbca7a8e87347693503c",
+    "url": "/Notas/static/js/main.fbca7a8e.chunk.js"
   },
   {
     "revision": "55a80934e656346bba15",
@@ -24,7 +24,7 @@ self.__precacheManifest = [
     "url": "/Notas/static/js/2.f05d3f39.chunk.js"
   },
   {
-    "revision": "6a156350f4d165345fda",
+    "revision": "fbca7a8e87347693503c",
     "url": "/Notas/static/css/main.71c74537.chunk.css"
   },
   {
@@ -32,7 +32,7 @@ self.__precacheManifest = [
     "url": "/Notas/static/css/4.060082a7.chunk.css"
   },
   {
-    "revision": "31c3488915f9618f40e3ec27d7b39f69",
+    "revision": "7e81b2578836f405e79b7b88d69bd8f5",
     "url": "/Notas/index.html"
   }
 ];
