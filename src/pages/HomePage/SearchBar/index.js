@@ -15,11 +15,11 @@ import doNoteAction, { GET_NOTES_BY_IDS } from '../../../actions/doNoteAction';
 
 const searchNotes = debounce(async (folderId, searchText, idb, setNotes) => {
     const noteIds = await searchWorker.search(folderId, searchText);
-    doNoteAction(GET_NOTES_BY_IDS.operation, {idb, noteIds, setNotes})
+    doNoteAction(GET_NOTES_BY_IDS.operation, { idb, noteIds, setNotes })
 }, 400);
 
 const SearchBar = ({ classes, openedFolder, setNotes }) => {
-    const {idb} = useContext(idbContext);
+    const { idb } = useContext(idbContext);
     const [value, setValue] = useState('');
     const clearValue = useCallback(() => {
         searchNotes(openedFolder.id, '', idb, setNotes);
@@ -59,7 +59,7 @@ const SearchBar = ({ classes, openedFolder, setNotes }) => {
 
 const styles = theme => ({
     root: {
-        maxHeight: 30,
+        minHeight: 30,
         width: '100%',
         background: '#dcdcdc',
         borderRadius: '5px',
@@ -74,7 +74,9 @@ const styles = theme => ({
         marginLeft: '-15px'
     },
     fontSize: {
-        fontSize: '12px'
+        fontSize: '12px',
+        padding: 0,
+        minHeight: 30,
     }
 });
 

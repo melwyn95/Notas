@@ -20,7 +20,7 @@ const NotePage = ({ match, history }) => {
     const [note, setNote] = useState(null);
     const [value, setValue] = useState(null);
     const [toolTipAnchorEl, setToolTipAnchorEl] = useState(null);
-    const [wordCount, setWordCount] = useState(-1);
+    const [wordCount, setWordCount] = useState(0);
 
     const iconClick = useCallback((e, tools) => {
         e.stopPropagation();

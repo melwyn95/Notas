@@ -40,10 +40,10 @@ const doNoteAction = (action, params) => {
 
 					notesStore.add({
 						color: WHITE.label,
-						content: '',
-						previewContent: '',
+						content: '    ',
+						previewContent: '    ',
 						structuredContent: defaultContent,
-						heading: '',
+						heading: '    ',
 						folderId: openedFolder.id,
 						creationTimestamp: timestamp,
 						lastModifiedTimestamp: timestamp
@@ -239,7 +239,7 @@ const doNoteAction = (action, params) => {
 				foldersStore.put(folder);
 				return tx.complete;
 			}).then(() => {
-				idb.then(async db => {
+				setNote && idb.then(async db => {
 					let tx = db.transaction(['notes'], 'readonly');
 					let notesStore = tx.objectStore('notes');
 					let dbNote = await notesStore.get(id);

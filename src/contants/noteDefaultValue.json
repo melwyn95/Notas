@@ -4,7 +4,16 @@
             {
                 "object": "block",
                 "type": "paragraph",
-                "nodes": []
+                "nodes": [
+                    {
+                        "object": "text",
+                        "leaves": [
+                            {
+                                "text": "    "
+                            }
+                        ]
+                    }
+                ]
             }
         ]
     }
