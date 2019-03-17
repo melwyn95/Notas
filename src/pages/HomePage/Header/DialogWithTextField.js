@@ -8,6 +8,8 @@ import Button from '@material-ui/core/Button';
 import doFolderAction, { RENAME_FOLDER, CREATE_FOLDER } from '../../../actions/doFolderAction';
 import IDBContext from '../../../contexts/idbContext';
 
+import './styles.css';
+
 const DialogWithTextField = (props) => {
 	const { classes } = props;
 	const { openedFolder, close, setOpenedFolder, create, setSnackError } = props;
@@ -19,34 +21,45 @@ const DialogWithTextField = (props) => {
 
 	return (
 		<Paper className={classes.root}>
-			<div>{headerLabel}</div>
+			<div className="container--header-label">{headerLabel}</div>
 			<TextField
 				value={value}
-				className={classes.rootTextField}
+				fullWidth
 				InputProps={{
 					classes: {
-						root: classes.rootTextField,
-						focused: classes.rootTextField
+						input: classes.rootInput,
+						notchedOutline: classes.notchedOutline
 					}
 				}}
 				onChange={(e) => setValue(e.target.value)}
 				variant="outlined"
 			/>
-			<Button onClick={() => {
-				doFolderAction(operation, openedFolder.id, { setOpenedFolder, idb, value, close, setSnackError });
-			}}>Ok</Button>
-			<Button onClick={close}> Cancel</Button>
+			<div className="container--buttons">
+				<Button classes={{ root: classes.buttonRoot }} onClick={() => {
+					doFolderAction(operation, openedFolder.id, { setOpenedFolder, idb, value, close, setSnackError });
+				}}>Ok</Button>
+				<Button classes={{ root: classes.buttonRoot }} onClick={close}> Cancel</Button>
+			</div>
 		</Paper>
 	);
 };
 
 const styles = (theme) => ({
 	root: {
-		height: 150,
-		width: 250
+		minHeight: 125,
+		minWidth: 220,
+		height: 125,
 	},
-	rootTextField: {
-		backgroundColor: '#eee'
+	rootInput: {
+		backgroundColor: '#eee',
+		padding: 10,
+		margin: '0 10px',
+	},
+	buttonRoot: {
+		width: '50%',
+	},
+	notchedOutline: {
+		border: 0,
 	}
 });
 

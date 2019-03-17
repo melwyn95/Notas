@@ -4,7 +4,7 @@ import { openDb } from 'idb';
 import Plain from 'slate-plain-serializer';
 import { WHITE } from '../contants/noteColors';
 
-const DEFAULT_NOTE_TEXT = 'This is supposed to be a long long long note asdasdasdasdadsasddasdasddasd';
+const DEFAULT_NOTE_TEXT = 'This is default note ........................';
 
 const timestamp = new Date().getTime();
 

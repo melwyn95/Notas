@@ -1,0 +1,25 @@
+.container--header-label {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+
+.container--buttons {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.container--message {
+    text-align: center;
+    line-height: 35px;
+    font-weight: 500;
+    font-size: 18px;
+    padding: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: calc(100% - 20px);
+}

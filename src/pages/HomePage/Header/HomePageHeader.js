@@ -5,7 +5,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Dialog from '@material-ui/core/Dialog';
 
-import doFolderAction, { FolderMenuOptions, RENAME_FOLDER, CREATE_FOLDER, GET_ALL_FOLDERS } from '../../../actions/doFolderAction';
+import doFolderAction, { FolderMenuOptions, RENAME_FOLDER, CREATE_FOLDER, GET_ALL_FOLDERS, DELETE_FOLDER } from '../../../actions/doFolderAction';
 
 import IDBContext from '../../../contexts/idbContext';
 
@@ -45,21 +45,29 @@ const HomePageHeader = ({ openedFolder, setOpenedFolder, setSnackError, showDrop
 				show={showDropdown}
 			/>
 			<Dialog open={Boolean(open)} onClose={close}>
-				{[RENAME_FOLDER.operation, CREATE_FOLDER.operation].includes(open) ? (
-					<DialogWithTextField
-						openedFolder={openedFolder}
-						close={close}
-						setOpenedFolder={setOpenedFolder}
-						create={open === CREATE_FOLDER.operation}
-						setSnackError={setSnackError}
-					/>
-				) : (
-						<DeleteFolder openedFolder={openedFolder} close={close} setOpenedFolder={setOpenedFolder} />
-					)}
+				{getDialogContent(open, openedFolder, close, setOpenedFolder, setSnackError)}
 			</Dialog>
 		</Fragment>
 	);
 };
+
+const getDialogContent = (open, openedFolder, close, setOpenedFolder, setSnackError) => {
+	switch (open) {
+		case RENAME_FOLDER.operation:
+		case CREATE_FOLDER.operation:
+			return <DialogWithTextField
+				openedFolder={openedFolder}
+				close={close}
+				setOpenedFolder={setOpenedFolder}
+				create={open === CREATE_FOLDER.operation}
+				setSnackError={setSnackError}
+			/>;
+		case DELETE_FOLDER.operation:
+			return <DeleteFolder openedFolder={openedFolder} close={close} setOpenedFolder={setOpenedFolder} />
+		default:
+			return null;
+	}
+}
 
 const FolderNameButton = ({ setShowDropdown, showDropdown, openedFolder: { name } }) =>
 	(<div className="container--dropdown">
