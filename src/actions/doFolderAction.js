@@ -53,10 +53,22 @@ const doFolderAction = async (actionName, folder_id, params) => {
 		case DELETE_FOLDER.operation: {
 			const { setOpenedFolder, idb } = params;
 			idb
-				.then((db) => {
-					let tx = db.transaction('folders', 'readwrite');
-					let store = tx.objectStore('folders');
-					store.delete(folder_id);
+				.then(async (db) => {
+					let tx = db.transaction(['folders', 'notes'], 'readwrite');
+					let foldersStore = tx.objectStore('folders');
+					let notesStore = tx.objectStore('notes');
+					let index = notesStore.index('notesFolderId');
+					let range = IDBKeyRange.only(folder_id);
+					
+					await index.openCursor(range).then(function cursorLoop(cursor) {
+						if (!cursor) {
+							return;
+						}
+						cursor.delete(cursor.primaryKey);
+						return cursor.continue().then(cursorLoop);
+					});
+
+					foldersStore.delete(folder_id);
 					return tx.complete;
 				})
 				.then(() => {
